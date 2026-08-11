@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Daily Health Check - BHFS</title>
+<style>
+  body { font-family: 'Segoe UI', Arial, sans-serif; background:#f4f6f8; color:#1f2933; margin:0; padding:0; }
+  .container { max-width: 1000px; margin: 0 auto; padding: 24px; }
+  h1 { font-size: 22px; margin-bottom: 4px; }
+  .subtitle { color:#52606d; margin-top:0; margin-bottom:24px; font-size:13px; }
+  .overall-banner { padding:14px 20px; border-radius:6px; font-size:18px; font-weight:600; margin-bottom:24px; color:#fff; }
+  .overall-HEALTHY { background:#1f9d55; }
+  .overall-WARNING { background:#d97706; }
+  .overall-CRITICAL { background:#c0362c; }
+  table { width:100%; border-collapse: collapse; margin-bottom: 28px; background:#fff; }
+  th, td { text-align:left; padding:8px 12px; border-bottom:1px solid #e2e8f0; font-size:13px; vertical-align:top; }
+  th { background:#eef2f7; font-weight:600; }
+  section h2 { font-size:17px; border-bottom:2px solid #cbd5e1; padding-bottom:6px; margin-top:36px; }
+  section h3 { font-size:14px; margin-bottom:4px; margin-top:20px; }
+  .badge { display:inline-block; padding:3px 10px; border-radius:10px; font-size:12px; font-weight:600; color:#fff; }
+  .badge-HEALTHY, .badge-COMPLETED, .badge-AVAILABLE { background:#1f9d55; }
+  .badge-WARNING, .badge-NO_DATA { background:#d97706; }
+  .badge-CRITICAL, .badge-FAIL, .badge-ERROR { background:#c0362c; }
+  .badge-NOT_PRESENT, .badge-NOT_CONFIGURED { background:#6b7280; }
+  .evidence-list { margin:4px 0 0 0; padding-left:18px; font-size:12px; color:#374151; }
+  .summary-text { font-size:12px; color:#52606d; margin: 2px 0 0 0; }
+  footer { font-size:11px; color:#94a3b8; margin-top:40px; text-align:center; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Daily Health Check &mdash; BHFS</h1>
+  <p class="subtitle">Run started: 2026-08-11 09:16:49 UTC &nbsp;|&nbsp; Report generated: 2026-08-11 14:50:38</p>
+
+  <div class="overall-banner overall-CRITICAL">Overall Status: CRITICAL</div>
+
+  <section>
+    <h2>1. Overall Health Summary</h2>
+    <table>
+      <tr><th>Check</th><th>Status</th><th>Summary</th></tr>
+      
+      <tr>
+        <td>RDS Availability / Status</td>
+        <td><span class="badge badge-HEALTHY">HEALTHY</span></td>
+        <td>1 RDS resource(s) checked; worst storage health = HEALTHY</td>
+      </tr>
+      
+      <tr>
+        <td>EC2 Instance and System Health</td>
+        <td><span class="badge badge-HEALTHY">HEALTHY</span></td>
+        <td>7 instance(s) checked; worst health = HEALTHY</td>
+      </tr>
+      
+      <tr>
+        <td>DXV Instance Availability</td>
+        <td><span class="badge badge-NOT_PRESENT">NOT PRESENT</span></td>
+        <td>DXV: Not Present</td>
+      </tr>
+      
+      <tr>
+        <td>ASG Health</td>
+        <td><span class="badge badge-HEALTHY">HEALTHY</span></td>
+        <td>11 ASG(s) checked; status = HEALTHY</td>
+      </tr>
+      
+      <tr>
+        <td>Kafka Consumer Details</td>
+        <td><span class="badge badge-NOT_PRESENT">NOT PRESENT</span></td>
+        <td>Kafka: Not Present</td>
+      </tr>
+      
+      <tr>
+        <td>CloudWatch API Health</td>
+        <td><span class="badge badge-HEALTHY">HEALTHY</span></td>
+        <td>CloudWatch API Health: HEALTHY</td>
+      </tr>
+      
+      <tr>
+        <td>UI / Application Availability</td>
+        <td><span class="badge badge-HEALTHY">HEALTHY</span></td>
+        <td>UI Availability: 100.0% available (success=179, failure=0)</td>
+      </tr>
+      
+      <tr>
+        <td>Database Connection Health</td>
+        <td><span class="badge badge-NOT_CONFIGURED">NOT CONFIGURED</span></td>
+        <td>Database Connection: Not Configured</td>
+      </tr>
+      
+      <tr>
+        <td>Watchlist Import Completion</td>
+        <td><span class="badge badge-COMPLETED">COMPLETED</span></td>
+        <td>Checked 1 watchlist source(s) (Factiva Import); worst status = COMPLETED</td>
+      </tr>
+      
+      <tr>
+        <td>Batch File Acquisition / Receipt</td>
+        <td><span class="badge badge-FAIL">FAIL</span></td>
+        <td>Checked 4 batch(es) (ACQ Success, Bad Files, Transaction File, Envelope Processing); worst status = FAIL</td>
+      </tr>
+      
+      <tr>
+        <td>WLM / Screening Batch Completion</td>
+        <td><span class="badge badge-COMPLETED">COMPLETED</span></td>
+        <td>Checked 1 WLM/Screening batch(es) (WLM Batch); worst status = COMPLETED</td>
+      </tr>
+      
+      <tr>
+        <td>AML Batch Completion</td>
+        <td><span class="badge badge-COMPLETED">COMPLETED</span></td>
+        <td>Checked 1 AML batch(es) (AML Batch); worst status = COMPLETED</td>
+      </tr>
+      
+      <tr>
+        <td>CDD Completion / Consistency</td>
+        <td><span class="badge badge-COMPLETED">COMPLETED</span></td>
+        <td>Checked 1 CDD batch(es) (CDD Batch); worst status = COMPLETED</td>
+      </tr>
+      
+      <tr>
+        <td>Batch Failure / Overrun</td>
+        <td><span class="badge badge-NOT_PRESENT">NOT PRESENT</span></td>
+        <td>Overrun Detection: Not Present</td>
+      </tr>
+      
+    </table>
+  </section>
+
+  <section>
+    <h2>2. Infrastructure Health</h2>
+    
+    <h3>RDS Availability / Status &mdash; <span class="badge badge-HEALTHY">HEALTHY</span></h3>
+    <p class="summary-text">1 RDS resource(s) checked; worst storage health = HEALTHY</p>
+    
+    <ul class="evidence-list">
+      <li><strong>bhfs-production-databaseresources-1mpu2oq6e2-eimdb-w0kos1uooxev:</strong> engine=postgres | status=available | region=eu-west-1 | multi_az=True | storage_used=17.8% | health=HEALTHY</li>
+    </ul>
+    
+    
+    <h3>EC2 Instance and System Health &mdash; <span class="badge badge-HEALTHY">HEALTHY</span></h3>
+    <p class="summary-text">7 instance(s) checked; worst health = HEALTHY</p>
+    
+    <ul class="evidence-list">
+      <li><strong>i-0217eebc3498b1553 (app1.production.bhfs.nrod):</strong> state=running | system=ok | instance=ok | az=eu-west-1a | cpu=7.9% (HEALTHY) | Memory: Not Available</li><li><strong>i-0b3a70b1d5e56a29d (smbd.production.bhfs.nrod):</strong> state=running | system=ok | instance=ok | az=eu-west-1a | cpu=0.5% (HEALTHY) | Memory: Not Available</li><li><strong>i-0184ba09e676ea37a (rtde.production.bhfs.nrod):</strong> state=running | system=ok | instance=ok | az=eu-west-1a | cpu=2.7% (HEALTHY) | Memory: Not Available</li><li><strong>i-04d9c2b140f54182b (dmz.production.bhfs.nrod):</strong> state=running | system=ok | instance=ok | az=eu-west-1a | cpu=7.6% (HEALTHY) | Memory: Not Available</li><li><strong>i-066119d6886218de1 (app2.production.bhfs.nrod):</strong> state=running | system=ok | instance=ok | az=eu-west-1b | cpu=7.2% (HEALTHY) | Memory: Not Available</li><li><strong>i-0674b02b36ac1125e (batch.production.bhfs.nrod):</strong> state=running | system=ok | instance=ok | az=eu-west-1b | cpu=43.0% (HEALTHY) | Memory: Not Available</li><li><strong>i-0cf887fc5c6ea6af4 (dmz.production.bhfs.nrod):</strong> state=running | system=ok | instance=ok | az=eu-west-1b | cpu=9.0% (HEALTHY) | Memory: Not Available</li>
+    </ul>
+    
+    
+    <h3>DXV Instance Availability &mdash; <span class="badge badge-NOT_PRESENT">NOT PRESENT</span></h3>
+    <p class="summary-text">DXV: Not Present</p>
+    
+    
+    <h3>ASG Health &mdash; <span class="badge badge-HEALTHY">HEALTHY</span></h3>
+    <p class="summary-text">11 ASG(s) checked; status = HEALTHY</p>
+    
+    <ul class="evidence-list">
+      <li><strong>bhfs-production-computeAnalyticsResources-1QJOY1EPEA46R-AnalyticsAutoScalingGroup-1XHOIFX2J1TIJ:</strong> desired=0 min=0 max=0 in_service=0 unhealthy=0 region=eu-west-1</li><li><strong>bhfs-production-computeAppResources-7KJUNRAV9G7N-AppAutoScalingGroupBackup-1O5NEI1SD82FV:</strong> desired=1 min=1 max=1 in_service=1 unhealthy=0 region=eu-west-1</li><li><strong>bhfs-production-computeAppResources-7KJUNRAV9G7N-AppAutoScalingGroupPrimary-1L8IB1S23IVX3:</strong> desired=1 min=1 max=1 in_service=1 unhealthy=0 region=eu-west-1</li><li><strong>bhfs-production-computeBatchResources-1TK42B7DNSTO2-BatchAutoScalingGroup-1XYOFMVJWTDUJ:</strong> desired=1 min=1 max=1 in_service=1 unhealthy=0 region=eu-west-1</li><li><strong>bhfs-production-computeDMZResources-ER5XTOQYK961-DMZAutoScalingGroupPrimary-QE9NXWD4BL2U:</strong> desired=2 min=1 max=3 in_service=2 unhealthy=0 region=eu-west-1</li><li><strong>bhfs-production-computeRTDEResources-180P0PTOZNN9L-RTDEAutoScalingGroup-K7L0UQL6BOFJ:</strong> desired=1 min=1 max=1 in_service=1 unhealthy=0 region=eu-west-1</li><li><strong>bhfs-production-computeRealTimeAppResources-1F18734KCN9SP-RealTimeAppAutoScalingGroupBackup-Obt9YymRcivk:</strong> desired=0 min=0 max=0 in_service=0 unhealthy=0 region=eu-west-1</li><li><strong>bhfs-production-computeRealTimeAppResources-1F18734KCN9SP-RealTimeAppAutoScalingGroupPrimary-FeTcHTSCx9Uv:</strong> desired=0 min=0 max=0 in_service=0 unhealthy=0 region=eu-west-1</li><li><strong>bhfs-production-computeSMBDResources-CHLUKSJ99DVM-SMBDAutoScalingGroup-1U6LJL1U9TVH8:</strong> desired=1 min=1 max=1 in_service=1 unhealthy=0 region=eu-west-1</li><li><strong>bhfs-production-computeWLM247Resources-1SJDUPUZD4PLW-IndexNodeAutoScalingGroup-UyItAN85JUTg:</strong> desired=0 min=0 max=1 in_service=0 unhealthy=0 region=eu-west-1</li><li><strong>bhfs-production-computeWLM247Resources-1SJDUPUZD4PLW-ProcNodeAutoScalingGroup-utZ46MKDDcHu:</strong> desired=0 min=0 max=1 in_service=0 unhealthy=0 region=eu-west-1</li>
+    </ul>
+    
+    
+    <h3>Kafka Consumer Details &mdash; <span class="badge badge-NOT_PRESENT">NOT PRESENT</span></h3>
+    <p class="summary-text">Kafka: Not Present</p>
+    
+    
+    <h3>CloudWatch API Health &mdash; <span class="badge badge-HEALTHY">HEALTHY</span></h3>
+    <p class="summary-text">CloudWatch API Health: HEALTHY</p>
+    
+    <ul class="evidence-list">
+      <li><strong>Log groups discovered:</strong> 2</li><li><strong>Metrics discovered:</strong> 1</li>
+    </ul>
+    
+    
+  </section>
+
+  <section>
+    <h2>3. Application Health</h2>
+    
+    <h3>UI / Application Availability &mdash; <span class="badge badge-HEALTHY">HEALTHY</span></h3>
+    <p class="summary-text">UI Availability: 100.0% available (success=179, failure=0)</p>
+    
+    <ul class="evidence-list">
+      <li><strong>UI Availability:</strong> 100.0% available (success=179, failure=0)</li>
+    </ul>
+    
+    
+    <h3>Database Connection Health &mdash; <span class="badge badge-NOT_CONFIGURED">NOT CONFIGURED</span></h3>
+    <p class="summary-text">Database Connection: Not Configured</p>
+    
+    <ul class="evidence-list">
+      <li><strong>Configuration:</strong> One or more required environment variables are not set</li>
+    </ul>
+    
+    
+  </section>
+
+  <section>
+    <h2>4. Batch / Business Process Health</h2>
+    
+    <h3>Watchlist Import Completion &mdash; <span class="badge badge-COMPLETED">COMPLETED</span></h3>
+    <p class="summary-text">Checked 1 watchlist source(s) (Factiva Import); worst status = COMPLETED</p>
+    
+    <ul class="evidence-list">
+      <li><strong>Factiva Import - evidence:</strong> 2026-08-11 03:43:53.704 | 11-Aug-2026 03:43:52,740 -  -  INFO  FpfaListLogicFacadeImpl:1382 - End of Factiva FPFA list import filename=djrc_wl-soc-ame_xml_202608102359_d.zip at 2026-08-11 03:43:52.74</li>
+    </ul>
+    
+    
+    <h3>Batch File Acquisition / Receipt &mdash; <span class="badge badge-FAIL">FAIL</span></h3>
+    <p class="summary-text">Checked 4 batch(es) (ACQ Success, Bad Files, Transaction File, Envelope Processing); worst status = FAIL</p>
+    
+    <ul class="evidence-list">
+      <li><strong>ACQ Success - failure evidence:</strong> Failed | 2026-08-11 09:00:04.835 | Aug 9 22:44	WLM_fail_20260808.flag.bak</li><li><strong>Bad Files - evidence:</strong> Sent (NetReveal_BAD_20260807.ZIP) | 2026-08-11 09:00:03.063 | 08/11/26 09:00:02:check_bad_files.sh - Found BAD files: NetReveal_BAD_20260807.ZIP.FLAG</li><li><strong>Transaction File - evidence:</strong> 2026-08-11 09:00:06.865 |  CUSTOMERS_20260809.txt    | 2026-08-10 20:09:32.923 | 2026-08-10 20:09:33.106 |             0 |            0 |                0
+ TRANSACTIONS_20260809.txt | 2026-08-10 20:09:33.152 | 2026-08-10 20:10:46.459 |             1 |        88163 |                0</li><li><strong>Envelope Processing - evidence:</strong> 2026-08-10 20:06:04.428 | 08/10/26 20:06:03 - ENVELOPE_LIMIT:1</li>
+    </ul>
+    
+    
+    <h3>WLM / Screening Batch Completion &mdash; <span class="badge badge-COMPLETED">COMPLETED</span></h3>
+    <p class="summary-text">Checked 1 WLM/Screening batch(es) (WLM Batch); worst status = COMPLETED</p>
+    
+    <ul class="evidence-list">
+      <li><strong>WLM Batch - evidence:</strong> Completed | 2026-08-11 09:10:06.110 |  20260809     | CDD                   |              | Y       | 2026-08-11 04:04:34.929412
+ 20260809     | AMLDET_SmbdProcessing |              | Y       | 2026-08-11 03:48:02.946
+ 20260809     | WLM Full              |              | Y       | 2026-08-11 03:31:07.473
+ 20260808     | CDD                   |              | Y       | 2026-08-10 01:26:34.618291
+ 20260808     | AMLDET_SmbdProcessing |              | Y       | 2026-08-10 01:23:02.922
+ 20260808     | WLM Full              |              | Y       | 2026-08-10 00:36:08.133
+ 20260807     | CDD                   |              | Y       | 2026-08-09 01:58:37.032196
+ 20260807     | AMLDET_SmbdProcessing |              | Y       | 2026-08-09 01:53:32.927
+ 20260807     | WLM Full              |              | Y       | 2026-08-08 23:17:38.156
+ 20260806     | CDD                   |              | Y       | 2026-08-07 23:01:35.139167</li>
+    </ul>
+    
+    
+    <h3>AML Batch Completion &mdash; <span class="badge badge-COMPLETED">COMPLETED</span></h3>
+    <p class="summary-text">Checked 1 AML batch(es) (AML Batch); worst status = COMPLETED</p>
+    
+    <ul class="evidence-list">
+      <li><strong>AML Batch - evidence:</strong> Completed | 2026-08-11 09:20:06.292 |  2332 | 2026-08-09 00:00:00 | 2026-08-09 23:59:59 | 18       | success      | SUCCEEDED |              | SUSPICIOUS_ACTIVITY | N/A        | /opt/netreveal/smbd/amlsmbd | AMLORCHLivyCallSmbdProcessingJob | nrod_batch  | 2026-08-11 03:35:02.903721 | 2026-08-11 03:47:33.054645 | 2026-08-11 03:35:33.062745 | 2026-08-11 03:47:03.037853 | AML_ProcessingAndTagging | 
+ 2331 | 2026-08-08 00:00:00 | 2026-08-08 23:59:59 | 17       | success      | SUCCEEDED |              | SUSPICIOUS_ACTIVITY | N/A        | /opt/netreveal/smbd/amlsmbd | AMLORCHLivyCallSmbdProcessingJob | nrod_batch  | 2026-08-10 01:09:32.925104 | 2026-08-10 01:22:33.035626 | 2026-08-10 01:10:33.055345 | 2026-08-10 01:22:03.045637 | AML_ProcessingAndTagging | 
+ 2330 | 2026-08-07 00:00:00 | 2026-08-07 23:59:59 | 16       | success      | SUCCEEDED |              | SUSPICIOUS_ACTIVITY | N/A        | /opt/netreveal/smbd/amlsmbd | AMLORCHLivyCallSmbdProcessingJob | nrod_batch  | 2026-08-09 01:37:32.915365 | 2026-08-09 01:53:03.030682 | 2026-08-09 01:38:33.034935 | 2026-08-09 01:52:33.036189 | AML_ProcessingAndTagging | 
+ 2329 | 2026-08-06 00:00:00 | 2026-08-06 23:59:59 | 15       | success      | SUCCEEDED |              | SUSPICIOUS_ACTIVITY | N/A        | /opt/netreveal/smbd/amlsmbd | AMLORCHLivyCallSmbdProcessingJob | nrod_batch  | 2026-08-07 22:46:02.905844 | 2026-08-07 22:59:03.028948 | 2026-08-07 22:47:03.041788 | 2026-08-07 22:58:33.03214  | AML_ProcessingAndTagging | 
+ 2328 | 2026-08-05 00:00:00 | 2026-08-05 23:59:59 | 14       | success      | SUCCEEDED |              | SUSPICIOUS_ACTIVITY | N/A        | /opt/netreveal/smbd/amlsmbd | AMLORCHLivyCallSmbdProcessingJob | nrod_batch  | 2026-08-06 22:13:02.904947 | 2026-08-06 22:26:03.030929 | 2026-08-06 22:14:03.028803 | 2026-08-06 22:25:33.053171 | AML_ProcessingAndTagging | </li>
+    </ul>
+    
+    
+    <h3>CDD Completion / Consistency &mdash; <span class="badge badge-COMPLETED">COMPLETED</span></h3>
+    <p class="summary-text">Checked 1 CDD batch(es) (CDD Batch); worst status = COMPLETED</p>
+    
+    <ul class="evidence-list">
+      <li><strong>CDD Batch - evidence:</strong> Completed | 2026-08-11 09:20:06.285 |          30862061 | CDDAGG_Customer_BatchBridgeJob            |          18291 | BatchBridgeJob | CDDAGG_IndScoringDone                       |       10 |            | succeeded | 2026-08-11 04:04:32.901 | 2026-08-11 04:04:34.916 |         1988 |          262 |                0 |             | CDD Processing  |          0
+         30862051 | CDDIND_Individual_Customer_BatchBridgeJob |          18286 | BatchBridgeJob | CDDIND_SetCustomerProcessingIsRunningToTrue |       10 |            | succeeded | 2026-08-11 04:03:35.635 | 2026-08-11 04:03:36.554 |          896 |          169 |                0 |             | CDD Processing  |          0
+         30831445 | CDDAGG_Customer_BatchBridgeJob            |          18291 | BatchBridgeJob | CDDAGG_IndScoringDone                       |       10 |            | succeeded | 2026-08-10 01:26:32.904 | 2026-08-10 01:26:34.603 |         1675 |          305 |                0 |             | CDD Processing  |          0
+         30831435 | CDDIND_Individual_Customer_BatchBridgeJob |          18286 | BatchBridgeJob | CDDIND_SetCustomerProcessingIsRunningToTrue |       10 |            | succeeded | 2026-08-10 01:25:35.617 | 2026-08-10 01:25:36.625 |          983 |          199 |                0 |             | CDD Processing  |          0
+         30804855 | CDDAGG_Customer_BatchBridgeJob            |          18291 | BatchBridgeJob | CDDAGG_IndScoringDone                       |       10 |            | succeeded | 2026-08-09 01:58:32.896 | 2026-08-09 01:58:37.015 |         4051 |          977 |                0 |             | CDD Processing  |          0
+         30804847 | CDDIND_Individual_Customer_BatchBridgeJob |          18286 | BatchBridgeJob | CDDIND_SetCustomerProcessingIsRunningToTrue |       10 |            | succeeded | 2026-08-09 01:57:38.332 | 2026-08-09 01:57:39.819 |         1464 |          725 |                0 |             | CDD Processing  |          0
+         30774397 | CDDAGG_Customer_BatchBridgeJob            |          18291 | BatchBridgeJob | CDDAGG_IndScoringDone                       |       10 |            | succeeded | 2026-08-07 23:01:32.902 | 2026-08-07 23:01:35.124 |         2200 |          834 |                0 |             | CDD Processing  |          0
+         30774388 | CDDIND_Individual_Customer_BatchBridgeJob |          18286 | BatchBridgeJob | CDDIND_SetCustomerProcessingIsRunningToTrue |       10 |            | succeeded | 2026-08-07 23:00:35.389 | 2026-08-07 23:00:36.739 |         1327 |          624 |                0 |             | CDD Processing  |          0
+         30746190 | CDDAGG_Customer_BatchBridgeJob            |          18291 | BatchBridgeJob | CDDAGG_IndScoringDone                       |       10 |            | succeeded | 2026-08-06 22:28:32.896 | 2026-08-06 22:28:34.572 |         1652 |          597 |                0 |             | CDD Processing  |          0
+         30746179 | CDDIND_Individual_Customer_BatchBridgeJob |          18286 | BatchBridgeJob | CDDIND_SetCustomerProcessingIsRunningToTrue |       10 |            | succeeded | 2026-08-06 22:27:35.439 | 2026-08-06 22:27:36.564 |         1104 |          379 |                0 |             | CDD Processing  |          0</li>
+    </ul>
+    
+    
+    <h3>Batch Failure / Overrun &mdash; <span class="badge badge-NOT_PRESENT">NOT PRESENT</span></h3>
+    <p class="summary-text">Overrun Detection: Not Present</p>
+    
+    
+  </section>
+
+  <section>
+    <h2>5. Evidence &amp; Errors</h2>
+    <p class="summary-text">Detailed evidence supporting each check result is listed above, next to the relevant check. Any check that raised an unexpected error is listed below for follow-up.</p>
+    <table>
+      <tr><th>Check</th><th>Timestamp (UTC)</th><th>Error</th></tr>
+      
+    </table>
+  </section>
+
+  <footer>Generated automatically by DailyChecksFramework &mdash; SingleClientChecks. For SRE / Management review and daily audit evidence.</footer>
+</div>
+</body>
+</html>

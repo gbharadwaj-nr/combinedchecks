@@ -1,0 +1,115 @@
+# MGL client configuration for the Daily Health Check.
+# Account/role/log group/stream names sourced from the existing
+# SingleClientChecks/MGL project (config.py + bootstrap.py).
+#
+# NOTE: MGL's real automation account below (616476889381) differs from the
+# "MGL" entry in DailyChecksFramework/bootstrap.py's CLIENTS dict (984546913585).
+# This is intentional and confirmed via a comment in SingleClientChecks/MGL/config.py -
+# using the real, actually-used value here rather than the DailyChecksFramework one.
+
+aws:
+  account_id: "616476889381"
+  role_arn: "arn:aws:iam::616476889381:role/FinOpsAutomationRole"
+  profile: null
+  regions: []   # empty -> auto-discover enabled regions for the account
+
+rds:
+  enabled: true
+  production_only: true
+
+ec2:
+  enabled: true
+  tag_filters: []
+  production_only: true
+  memory_metric_namespace: "CWAgent"
+
+ui:
+  enabled: true
+  log_group: "/aws/lambda/mglproductionUIAvailabilityCheck"
+  query_hours: 3   # matches lookback_minutes=180 in the reference console query
+
+# No dedicated DXV dashboard check in the existing MGL check list - Not Present.
+dxv:
+  enabled: false
+  tag_filters: []
+
+asg:
+  enabled: true
+  tag_filters: []
+  production_only: true
+
+kafka:
+  enabled: false
+  bootstrap_servers_env: "MGL_KAFKA_BOOTSTRAP_SERVERS"
+  consumer_groups: []
+
+cloudwatch:
+  lookback_hours: 24
+  log_group_prefixes:
+    - "mgl-production-ApplicationLogs-1GIG4IOL2HSFZ"
+    - "/aws/lambda/mglproductionUIAvailabilityCheck"
+  required_log_groups:
+    - "mgl-production-ApplicationLogs-1GIG4IOL2HSFZ"
+    - "/aws/lambda/mglproductionUIAvailabilityCheck"
+  required_metrics:
+    - namespace: "AWS/RDS"
+      metric_name: "FreeStorageSpace"
+
+# Database Validation is disabled until real MGL_DB_* connection details are provided
+# (matches the SingleClientChecks/MGL/config.py comment - lib/db_check.py is ready,
+# just not wired to real credentials yet). Set the env vars below in Jenkins to enable.
+database:
+  enabled: true
+  engine: "postgresql"
+  host_env: "MGL_DB_HOST"
+  port_env: "MGL_DB_PORT"
+  name_env: "MGL_DB_NAME"
+  user_env: "MGL_DB_USER"
+  password_env: "MGL_DB_PASSWORD"
+  timeout_seconds: 5
+
+# No World-Check/Factiva watchlist import in the existing MGL check list - Not Present.
+# ("WorldCheck Download" exists but is a batch download, not an import - see batch_file below.)
+watchlist:
+  enabled: false
+  sources: []
+
+# Maps to the existing "WorldCheck Download" (runBatch.log) and "Acquisition Status"
+# (getDXVLandingFiles.log) checks - confirms batch files were received/downloaded.
+batch_file:
+  enabled: true
+  batches:
+    - name: "WorldCheck Download"
+      log_group: "mgl-production-ApplicationLogs-1GIG4IOL2HSFZ"
+      log_stream_pattern: "runBatch.log"
+      query_hours: 24
+    - name: "Acquisition Status"
+      log_group: "mgl-production-ApplicationLogs-1GIG4IOL2HSFZ"
+      log_stream_pattern: "batch/i-0a1a72b531032dc24/batch/getDXVLandingFiles.log"
+      query_hours: 24
+
+# Maps to the existing "WLM Status" check (runBatch.log "WLM Batch" success line).
+wlm:
+  enabled: true
+  batches:
+    - name: "WLM Status"
+      log_group: "mgl-production-ApplicationLogs-1GIG4IOL2HSFZ"
+      log_stream_pattern: "runBatch.log"
+      query_hours: 12   # matches lookback_minutes=720 in the reference
+
+# No dedicated AML batch check in the existing MGL check list - Not Present.
+aml:
+  enabled: false
+  batches: []
+
+# No CDD processing in the existing MGL check list - Not Present.
+cdd:
+  enabled: false
+  batches: []
+
+# No start/completion timestamp evidence exists in the current MGL check scripts
+# (only latest-message keyword checks) - left unconfigured rather than inventing
+# start/expected-completion markers that aren't backed by evidence.
+overrun:
+  enabled: false
+  batches: []

@@ -23,10 +23,9 @@ ec2:
 
 ui:
   enabled: true
-  endpoints:
-    - name: "Fleetcor Portal"
-      url: "https://fleetcor.example.com/health"
-      expected_status: 200
+  # Real UI-check Lambda log group (SingleClientChecks/FleetCor/config.py LOG_GROUPS["ui"]).
+  log_group: "/aws/lambda/fltcrproductionUIAvailabilityCheck"
+  query_hours: 3   # matches lookback_minutes=180 in the reference console query
 
 # Maps to the existing "DXV" dashboard check (Acquisition Success Files),
 # reported via the same check_acq_success.log stream as ACQ Flags below.

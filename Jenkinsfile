@@ -4,6 +4,7 @@ pipeline {
     options {
         timestamps()
         timeout(time: 30, unit: 'MINUTES')
+        buildDiscarder(logRotator(numToKeepStr: '30', artifactNumToKeepStr: '30'))
     }
 
     // Scheduled for twice-daily execution; adjust cron as required per environment.
@@ -12,7 +13,12 @@ pipeline {
     }
 
     parameters {
-        string(name: 'CLIENT_NAME', defaultValue: 'fleetcor', description: 'Client to run the Daily Health Check for')
+        // Optional override. If left blank, main.py resolves the client from $CLIENT_NAME
+        // or, failing that, this job's own name (e.g. job "combined_mgl" -> client "mgl") -
+        // matching the one-job-per-client convention already used for combined_fleetcor.
+        // Onboarding a new client (MGL, BHFS, ...) is then just: add clients/<name>.yaml,
+        // create a Jenkins job named "combined_<name>" pointing at this same Jenkinsfile.
+        string(name: 'CLIENT_NAME', defaultValue: '', description: 'Client to check (optional - inferred from the job name if blank)')
     }
 
     environment {
@@ -36,7 +42,7 @@ pipeline {
                 withCredentials([
                     [$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-master-account']
                 ]) {
-                    bat "python -u main.py --client %CLIENT_NAME%"
+                    bat 'python -u main.py'
                 }
             }
         }

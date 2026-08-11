@@ -3,12 +3,19 @@
 Usage (Jenkins-compatible):
     python -u main.py --client fleetcor
 
+The --client flag can be omitted if either the CLIENT_NAME environment
+variable is set, or the script is run from a Jenkins job named
+"combined_<client>" (e.g. job "combined_mgl" implies --client mgl) - this
+matches the one-job-per-client Jenkins convention already in use, so
+onboarding a new client needs no per-job parameter wiring.
+
 Reuses the framework's authentication (AssumeRole), region discovery,
 client configuration and report generation. Each check runs in isolation
 (see checks.base.run_check) so that a single failure never stops the rest
 of the daily health check.
 """
 import argparse
+import os
 import sys
 from datetime import datetime, timezone
 
@@ -26,9 +33,17 @@ from utils.logging_utils import get_logger
 
 logger = get_logger(__name__)
 
+# Jenkins job-name prefix for this org's one-job-per-client convention (e.g. combined_fleetcor).
+_JENKINS_JOB_PREFIX = "combined_"
+
 
 class BootstrapError(Exception):
     """Raised when AWS authentication/region discovery fails before any checks can run."""
+
+
+class ClientResolutionError(Exception):
+    """Raised when no client name could be determined from args/env/Jenkins job name."""
+
 
 # Order mirrors the report sections: infrastructure, application, batch/business.
 CHECK_MODULES = [
@@ -40,10 +55,31 @@ CHECK_MODULES = [
 
 def parse_args(argv=None):
     parser = argparse.ArgumentParser(description="SingleClientChecks Daily Health Check")
-    parser.add_argument("--client", required=True, help="Client name, e.g. fleetcor")
+    parser.add_argument("--client", default=None,
+                         help="Client name, e.g. fleetcor. Falls back to $CLIENT_NAME, then the "
+                              "Jenkins job name (stripping a 'combined_' prefix) if omitted.")
     parser.add_argument("--dry-run", action="store_true",
                          help="Render a report from sample data without making any AWS/HTTP/DB calls")
     return parser.parse_args(argv)
+
+
+def resolve_client_name(explicit_client):
+    """Resolve the client name from (in order): --client, $CLIENT_NAME, $JOB_NAME."""
+    if explicit_client:
+        return explicit_client
+
+    env_client = os.environ.get("CLIENT_NAME")
+    if env_client:
+        return env_client
+
+    job_name = os.environ.get("JOB_NAME", "")
+    if job_name.lower().startswith(_JENKINS_JOB_PREFIX):
+        return job_name[len(_JENKINS_JOB_PREFIX):]
+
+    raise ClientResolutionError(
+        "No client specified: pass --client, set CLIENT_NAME, or run from a "
+        f"'{_JENKINS_JOB_PREFIX}<client>' Jenkins job"
+    )
 
 
 def run_daily_health_check(client_name, dry_run=False):
@@ -81,7 +117,13 @@ def run_daily_health_check(client_name, dry_run=False):
 def main(argv=None):
     args = parse_args(argv)
     try:
-        output_path, _results = run_daily_health_check(args.client, dry_run=args.dry_run)
+        client_name = resolve_client_name(args.client)
+    except ClientResolutionError as exc:
+        logger.error("%s", exc)
+        return 1
+
+    try:
+        output_path, _results = run_daily_health_check(client_name, dry_run=args.dry_run)
     except ConfigError as exc:
         logger.error("Configuration error: %s", exc)
         return 1

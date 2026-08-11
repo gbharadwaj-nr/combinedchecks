@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Daily Health Check - MGL</title>
+<style>
+  body { font-family: 'Segoe UI', Arial, sans-serif; background:#f4f6f8; color:#1f2933; margin:0; padding:0; }
+  .container { max-width: 1000px; margin: 0 auto; padding: 24px; }
+  h1 { font-size: 22px; margin-bottom: 4px; }
+  .subtitle { color:#52606d; margin-top:0; margin-bottom:24px; font-size:13px; }
+  .overall-banner { padding:14px 20px; border-radius:6px; font-size:18px; font-weight:600; margin-bottom:24px; color:#fff; }
+  .overall-HEALTHY { background:#1f9d55; }
+  .overall-WARNING { background:#d97706; }
+  .overall-CRITICAL { background:#c0362c; }
+  table { width:100%; border-collapse: collapse; margin-bottom: 28px; background:#fff; }
+  th, td { text-align:left; padding:8px 12px; border-bottom:1px solid #e2e8f0; font-size:13px; vertical-align:top; }
+  th { background:#eef2f7; font-weight:600; }
+  section h2 { font-size:17px; border-bottom:2px solid #cbd5e1; padding-bottom:6px; margin-top:36px; }
+  section h3 { font-size:14px; margin-bottom:4px; margin-top:20px; }
+  .badge { display:inline-block; padding:3px 10px; border-radius:10px; font-size:12px; font-weight:600; color:#fff; }
+  .badge-HEALTHY, .badge-COMPLETED, .badge-AVAILABLE { background:#1f9d55; }
+  .badge-WARNING, .badge-NO_DATA { background:#d97706; }
+  .badge-CRITICAL, .badge-FAIL, .badge-ERROR { background:#c0362c; }
+  .badge-NOT_PRESENT, .badge-NOT_CONFIGURED { background:#6b7280; }
+  .evidence-list { margin:4px 0 0 0; padding-left:18px; font-size:12px; color:#374151; }
+  .summary-text { font-size:12px; color:#52606d; margin: 2px 0 0 0; }
+  footer { font-size:11px; color:#94a3b8; margin-top:40px; text-align:center; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Daily Health Check &mdash; MGL</h1>
+  <p class="subtitle">Run started: 2026-08-11 09:13:50 UTC &nbsp;|&nbsp; Report generated: 2026-08-11 14:46:23</p>
+
+  <div class="overall-banner overall-CRITICAL">Overall Status: CRITICAL</div>
+
+  <section>
+    <h2>1. Overall Health Summary</h2>
+    <table>
+      <tr><th>Check</th><th>Status</th><th>Summary</th></tr>
+      
+      <tr>
+        <td>RDS Availability / Status</td>
+        <td><span class="badge badge-WARNING">WARNING</span></td>
+        <td>3 RDS resource(s) checked; worst storage health = WARNING</td>
+      </tr>
+      
+      <tr>
+        <td>EC2 Instance and System Health</td>
+        <td><span class="badge badge-HEALTHY">HEALTHY</span></td>
+        <td>21 instance(s) checked; worst health = HEALTHY</td>
+      </tr>
+      
+      <tr>
+        <td>DXV Instance Availability</td>
+        <td><span class="badge badge-NOT_PRESENT">NOT PRESENT</span></td>
+        <td>DXV: Not Present</td>
+      </tr>
+      
+      <tr>
+        <td>ASG Health</td>
+        <td><span class="badge badge-HEALTHY">HEALTHY</span></td>
+        <td>35 ASG(s) checked; status = HEALTHY</td>
+      </tr>
+      
+      <tr>
+        <td>Kafka Consumer Details</td>
+        <td><span class="badge badge-NOT_PRESENT">NOT PRESENT</span></td>
+        <td>Kafka: Not Present</td>
+      </tr>
+      
+      <tr>
+        <td>CloudWatch API Health</td>
+        <td><span class="badge badge-HEALTHY">HEALTHY</span></td>
+        <td>CloudWatch API Health: HEALTHY</td>
+      </tr>
+      
+      <tr>
+        <td>UI / Application Availability</td>
+        <td><span class="badge badge-HEALTHY">HEALTHY</span></td>
+        <td>UI Availability: 100.0% available (success=180, failure=0)</td>
+      </tr>
+      
+      <tr>
+        <td>Database Connection Health</td>
+        <td><span class="badge badge-NOT_CONFIGURED">NOT CONFIGURED</span></td>
+        <td>Database Connection: Not Configured</td>
+      </tr>
+      
+      <tr>
+        <td>Watchlist Import Completion</td>
+        <td><span class="badge badge-NOT_PRESENT">NOT PRESENT</span></td>
+        <td>Watchlist Import: Not Present</td>
+      </tr>
+      
+      <tr>
+        <td>Batch File Acquisition / Receipt</td>
+        <td><span class="badge badge-FAIL">FAIL</span></td>
+        <td>Checked 2 batch(es) (WorldCheck Download, Acquisition Status); worst status = FAIL</td>
+      </tr>
+      
+      <tr>
+        <td>WLM / Screening Batch Completion</td>
+        <td><span class="badge badge-FAIL">FAIL</span></td>
+        <td>Checked 1 WLM/Screening batch(es) (WLM Status); worst status = FAIL</td>
+      </tr>
+      
+      <tr>
+        <td>AML Batch Completion</td>
+        <td><span class="badge badge-NOT_PRESENT">NOT PRESENT</span></td>
+        <td>AML Batch: Not Present</td>
+      </tr>
+      
+      <tr>
+        <td>CDD Completion / Consistency</td>
+        <td><span class="badge badge-NOT_PRESENT">NOT PRESENT</span></td>
+        <td>CDD: Not Present</td>
+      </tr>
+      
+      <tr>
+        <td>Batch Failure / Overrun</td>
+        <td><span class="badge badge-NOT_PRESENT">NOT PRESENT</span></td>
+        <td>Overrun Detection: Not Present</td>
+      </tr>
+      
+    </table>
+  </section>
+
+  <section>
+    <h2>2. Infrastructure Health</h2>
+    
+    <h3>RDS Availability / Status &mdash; <span class="badge badge-WARNING">WARNING</span></h3>
+    <p class="summary-text">3 RDS resource(s) checked; worst storage health = WARNING</p>
+    
+    <ul class="evidence-list">
+      <li><strong>lfs-prod-databaseresources-vlh1arko2g5c-eimdb-auieceah6ke5:</strong> engine=oracle-se2 | status=available | region=ap-southeast-2 | multi_az=True | storage_used=85.7% | health=WARNING</li><li><strong>mgl-production-databaseresources-1g1njwjdymk-eimdb-ntmettsa4wfr:</strong> engine=oracle-se2 | status=available | region=ap-southeast-2 | multi_az=True | storage_used=62.5% | health=HEALTHY</li><li><strong>suncorp-prod-20251216-170000:</strong> engine=oracle-se2 | status=available | region=ap-southeast-2 | multi_az=False | storage_used=85.0% | health=WARNING</li>
+    </ul>
+    
+    
+    <h3>EC2 Instance and System Health &mdash; <span class="badge badge-HEALTHY">HEALTHY</span></h3>
+    <p class="summary-text">21 instance(s) checked; worst health = HEALTHY</p>
+    
+    <ul class="evidence-list">
+      <li><strong>i-0608f34e6ce2778bb (dmz.production.lfs.nrod):</strong> state=running | system=ok | instance=ok | az=ap-southeast-2a | cpu=12.3% (HEALTHY) | Memory: Not Available</li><li><strong>i-0cb78c6c699334ad5 (app1.production.lfs.nrod):</strong> state=running | system=ok | instance=ok | az=ap-southeast-2a | cpu=3.0% (HEALTHY) | Memory: Not Available</li><li><strong>i-010384ef9aa11d6a0 (dmz.production.suncorp.nrod):</strong> state=running | system=ok | instance=ok | az=ap-southeast-2c | cpu=10.8% (HEALTHY) | Memory: Not Available</li><li><strong>i-0af9af36e7a02029f (app1.production.suncorp.nrod):</strong> state=running | system=ok | instance=ok | az=ap-southeast-2c | cpu=7.5% (HEALTHY) | Memory: Not Available</li><li><strong>i-0f21d05f500461007 (batch.production.suncorp.nrod):</strong> state=running | system=ok | instance=ok | az=ap-southeast-2c | cpu=4.5% (HEALTHY) | Memory: Not Available</li><li><strong>i-009a7ba15dd370836 (dmz.production.lfs.nrod):</strong> state=running | system=ok | instance=ok | az=ap-southeast-2b | cpu=11.4% (HEALTHY) | Memory: Not Available</li><li><strong>i-059e1609eda437079 (app2.production.lfs.nrod):</strong> state=running | system=ok | instance=ok | az=ap-southeast-2b | cpu=3.2% (HEALTHY) | Memory: Not Available</li><li><strong>i-06c3ccf7f1199386d (batch.production.lfs.nrod):</strong> state=running | system=ok | instance=ok | az=ap-southeast-2b | cpu=2.0% (HEALTHY) | Memory: Not Available</li><li><strong>i-0aa5bb294bbc4e648 (app2.production.iag.nrod):</strong> state=running | system=ok | instance=ok | az=ap-southeast-2b | cpu=2.0% (HEALTHY) | Memory: Not Available</li><li><strong>i-03990c0115c06ae1d (smbd.production.iag.nrod):</strong> state=running | system=ok | instance=ok | az=ap-southeast-2b | cpu=0.9% (HEALTHY) | Memory: Not Available</li><li><strong>i-00f185c8c7196a8f3 (batch.production.iag.nrod):</strong> state=running | system=ok | instance=ok | az=ap-southeast-2b | cpu=2.2% (HEALTHY) | Memory: Not Available</li><li><strong>i-026f08e347115f9a8 (dmz.production.suncorp.nrod):</strong> state=running | system=ok | instance=ok | az=ap-southeast-2b | cpu=12.4% (HEALTHY) | Memory: Not Available</li><li><strong>i-0bb90449df7e5268f (app2.production.suncorp.nrod):</strong> state=running | system=ok | instance=ok | az=ap-southeast-2b | cpu=2.5% (HEALTHY) | Memory: Not Available</li><li><strong>i-08c0c82491c6a07b0 (dmz.production.iag.nrod):</strong> state=running | system=ok | instance=ok | az=ap-southeast-2b | cpu=7.9% (HEALTHY) | Memory: Not Available</li><li><strong>i-02c04859006255c1f (app2.production.mgl.nrod):</strong> state=running | system=ok | instance=ok | az=ap-southeast-2b | cpu=0.7% (HEALTHY) | Memory: Not Available</li><li><strong>i-0631678454f4e5b4a (dmz.production.mgl.nrod):</strong> state=running | system=ok | instance=ok | az=ap-southeast-2b | cpu=11.6% (HEALTHY) | Memory: Not Available</li><li><strong>i-0256b2c647e23d87c (app1.production.iag.nrod):</strong> state=running | system=ok | instance=ok | az=ap-southeast-2a | cpu=1.8% (HEALTHY) | Memory: Not Available</li><li><strong>i-09f9824a19ec5cb29 (dmz.production.iag.nrod):</strong> state=running | system=ok | instance=ok | az=ap-southeast-2a | cpu=12.2% (HEALTHY) | Memory: Not Available</li><li><strong>i-0fe5da683c18832a6 (app1.production.mgl.nrod):</strong> state=running | system=ok | instance=ok | az=ap-southeast-2a | cpu=0.7% (HEALTHY) | Memory: Not Available</li><li><strong>i-0aac71cf3617f5fc8 (dmz.production.mgl.nrod):</strong> state=running | system=ok | instance=ok | az=ap-southeast-2a | cpu=11.2% (HEALTHY) | Memory: Not Available</li><li><strong>i-076c46db2a038991c (batch.production.mgl.nrod):</strong> state=running | system=ok | instance=ok | az=ap-southeast-2a | cpu=1.4% (HEALTHY) | Memory: Not Available</li>
+    </ul>
+    
+    
+    <h3>DXV Instance Availability &mdash; <span class="badge badge-NOT_PRESENT">NOT PRESENT</span></h3>
+    <p class="summary-text">DXV: Not Present</p>
+    
+    
+    <h3>ASG Health &mdash; <span class="badge badge-HEALTHY">HEALTHY</span></h3>
+    <p class="summary-text">35 ASG(s) checked; status = HEALTHY</p>
+    
+    <ul class="evidence-list">
+      <li><strong>iag-production-computeAnalyticsResources-KXCQQ1GBVUW5-AnalyticsAutoScalingGroup-1RMP2X2R0IBZM:</strong> desired=0 min=0 max=1 in_service=0 unhealthy=0 region=ap-southeast-2</li><li><strong>iag-production-computeAppResources-1O68MYZ85H4CW-AppAutoScalingGroupBackup-1RRKZPVJIXG56:</strong> desired=1 min=1 max=1 in_service=1 unhealthy=0 region=ap-southeast-2</li><li><strong>iag-production-computeAppResources-1O68MYZ85H4CW-AppAutoScalingGroupPrimary-1N7AC7F1XCDHF:</strong> desired=1 min=1 max=1 in_service=1 unhealthy=0 region=ap-southeast-2</li><li><strong>iag-production-computeBatchResources-BZFUJ648ZB52-BatchAutoScalingGroup-1OAODYR2NF9DK:</strong> desired=1 min=1 max=1 in_service=1 unhealthy=0 region=ap-southeast-2</li><li><strong>iag-production-computeDMZResources-11IMD75UFNBKP-DMZAutoScalingGroupPrimary-1FGKXA0UX8P14:</strong> desired=2 min=1 max=2 in_service=2 unhealthy=0 region=ap-southeast-2</li><li><strong>iag-production-computeRTDEResources-CGCU8QYY486U-RTDEAutoScalingGroup-1QBAM09QFX3KY:</strong> desired=0 min=0 max=0 in_service=0 unhealthy=0 region=ap-southeast-2</li><li><strong>iag-production-computeRealTimeAppResources-RMZS1YJXK6EN-RealTimeAppAutoScalingGroupBackup-w3RQZL7ulh53:</strong> desired=0 min=0 max=0 in_service=0 unhealthy=0 region=ap-southeast-2</li><li><strong>iag-production-computeRealTimeAppResources-RMZS1YJXK6EN-RealTimeAppAutoScalingGroupPrimary-0v75LEJTcWUg:</strong> desired=0 min=0 max=0 in_service=0 unhealthy=0 region=ap-southeast-2</li><li><strong>iag-production-computeSMBDResources-D4PNMVAN3IUX-SMBDAutoScalingGroup-1EXDOVQ9ZVHI3:</strong> desired=1 min=1 max=1 in_service=1 unhealthy=0 region=ap-southeast-2</li><li><strong>iag-production-computeWLM247Resources-198W2CM5VPVVQ-IndexNodeAutoScalingGroup-kV8E5t0JRrJK:</strong> desired=0 min=0 max=1 in_service=0 unhealthy=0 region=ap-southeast-2</li><li><strong>iag-production-computeWLM247Resources-198W2CM5VPVVQ-ProcNodeAutoScalingGroup-1fy91XOgxvix:</strong> desired=0 min=0 max=1 in_service=0 unhealthy=0 region=ap-southeast-2</li><li><strong>lfs-Prod-computeAppResources-1UABQ1Q3UMAU7-AppAutoScalingGroupBackup-1q2ZyYGTKaZ5:</strong> desired=1 min=1 max=1 in_service=1 unhealthy=0 region=ap-southeast-2</li><li><strong>lfs-Prod-computeAppResources-1UABQ1Q3UMAU7-AppAutoScalingGroupPrimary-PbPmLLz6aj4N:</strong> desired=1 min=1 max=1 in_service=1 unhealthy=0 region=ap-southeast-2</li><li><strong>lfs-Prod-computeBatchResources-1D4LJ8J5QVTZI-BatchAutoScalingGroup-5bQ16EdJj5Mg:</strong> desired=1 min=1 max=1 in_service=1 unhealthy=0 region=ap-southeast-2</li><li><strong>lfs-Prod-computeDMZResources-1GI9QSTAOPB4Z-DMZAutoScalingGroupPrimary-Eh8KP9VlqonX:</strong> desired=2 min=1 max=3 in_service=2 unhealthy=0 region=ap-southeast-2</li><li><strong>lfs-Prod-computeRealTimeAppResources-1W2L1R3RA2CEP-RealTimeAppAutoScalingGroupBackup-vmYwN11ywZUO:</strong> desired=0 min=0 max=0 in_service=0 unhealthy=0 region=ap-southeast-2</li><li><strong>lfs-Prod-computeRealTimeAppResources-1W2L1R3RA2CEP-RealTimeAppAutoScalingGroupPrimary-1C7qWSqYZePZ:</strong> desired=0 min=0 max=0 in_service=0 unhealthy=0 region=ap-southeast-2</li><li><strong>lfs-Prod-computeWLM247Resources-RT3E43607MUV-IndexNodeAutoScalingGroup-DgoCZG7ly0q9:</strong> desired=0 min=0 max=1 in_service=0 unhealthy=0 region=ap-southeast-2</li><li><strong>lfs-Prod-computeWLM247Resources-RT3E43607MUV-ProcNodeAutoScalingGroup-QyVf9PMgagIH:</strong> desired=0 min=0 max=1 in_service=0 unhealthy=0 region=ap-southeast-2</li><li><strong>mgl-production-computeAppResources-WTNUO0KSUWRJ-AppAutoScalingGroupBackup-13PDEUYOD1KYM:</strong> desired=1 min=1 max=1 in_service=1 unhealthy=0 region=ap-southeast-2</li><li><strong>mgl-production-computeAppResources-WTNUO0KSUWRJ-AppAutoScalingGroupPrimary-1UT96401JBWUA:</strong> desired=1 min=1 max=1 in_service=1 unhealthy=0 region=ap-southeast-2</li><li><strong>mgl-production-computeBatchResources-UFFPJKZITW2Y-BatchAutoScalingGroup-1B1WBC2NDNVR3:</strong> desired=1 min=1 max=1 in_service=1 unhealthy=0 region=ap-southeast-2</li><li><strong>mgl-production-computeDMZResources-SF14IDV2SEOO-DMZAutoScalingGroupPrimary-R9IQV02ZGNDA:</strong> desired=2 min=1 max=3 in_service=2 unhealthy=0 region=ap-southeast-2</li><li><strong>mgl-production-computeRealTimeAppResources-1MNMLBGDC2K4Y-RealTimeAppAutoScalingGroupBackup-0x3qdr9Ho8QX:</strong> desired=0 min=0 max=0 in_service=0 unhealthy=0 region=ap-southeast-2</li><li><strong>mgl-production-computeRealTimeAppResources-1MNMLBGDC2K4Y-RealTimeAppAutoScalingGroupPrimary-s6Uc51L1b1nv:</strong> desired=0 min=0 max=0 in_service=0 unhealthy=0 region=ap-southeast-2</li><li><strong>mgl-production-computeWLM247Resources-BQTGSVF0RX27-IndexNodeAutoScalingGroup-bNLlsYWYuXs9:</strong> desired=0 min=0 max=1 in_service=0 unhealthy=0 region=ap-southeast-2</li><li><strong>mgl-production-computeWLM247Resources-BQTGSVF0RX27-ProcNodeAutoScalingGroup-7kEAnSjNz48a:</strong> desired=0 min=0 max=1 in_service=0 unhealthy=0 region=ap-southeast-2</li><li><strong>suncorp-prod-computeAppResources-RYWLRX00NEEL-AppAutoScalingGroupBackup-133GLL5XNN0NY:</strong> desired=1 min=1 max=1 in_service=1 unhealthy=0 region=ap-southeast-2</li><li><strong>suncorp-prod-computeAppResources-RYWLRX00NEEL-AppAutoScalingGroupPrimary-EUD212H3ZVYW:</strong> desired=1 min=1 max=1 in_service=1 unhealthy=0 region=ap-southeast-2</li><li><strong>suncorp-prod-computeBatchResources-FZ5787NM1BI7-BatchAutoScalingGroup-N0XORS8TFRRO:</strong> desired=1 min=1 max=1 in_service=1 unhealthy=0 region=ap-southeast-2</li><li><strong>suncorp-prod-computeDMZResources-1M328M13B7XZ9-DMZAutoScalingGroupPrimary-1HKDVPYVOYG64:</strong> desired=2 min=1 max=3 in_service=2 unhealthy=0 region=ap-southeast-2</li><li><strong>suncorp-prod-computeRealTimeAppResources-YDUJWHOQYP7R-RealTimeAppAutoScalingGroupBackup-qykYWSK8j2HV:</strong> desired=0 min=0 max=0 in_service=0 unhealthy=0 region=ap-southeast-2</li><li><strong>suncorp-prod-computeRealTimeAppResources-YDUJWHOQYP7R-RealTimeAppAutoScalingGroupPrimary-ZYDsNWF27SQc:</strong> desired=0 min=0 max=0 in_service=0 unhealthy=0 region=ap-southeast-2</li><li><strong>suncorp-prod-computeWLM247Resources-ZBFWX2QWE4PC-IndexNodeAutoScalingGroup-xyE9ase9a2zR:</strong> desired=0 min=0 max=1 in_service=0 unhealthy=0 region=ap-southeast-2</li><li><strong>suncorp-prod-computeWLM247Resources-ZBFWX2QWE4PC-ProcNodeAutoScalingGroup-H6hojdFMu0Ed:</strong> desired=0 min=0 max=1 in_service=0 unhealthy=0 region=ap-southeast-2</li>
+    </ul>
+    
+    
+    <h3>Kafka Consumer Details &mdash; <span class="badge badge-NOT_PRESENT">NOT PRESENT</span></h3>
+    <p class="summary-text">Kafka: Not Present</p>
+    
+    
+    <h3>CloudWatch API Health &mdash; <span class="badge badge-HEALTHY">HEALTHY</span></h3>
+    <p class="summary-text">CloudWatch API Health: HEALTHY</p>
+    
+    <ul class="evidence-list">
+      <li><strong>Log groups discovered:</strong> 2</li><li><strong>Metrics discovered:</strong> 1</li>
+    </ul>
+    
+    
+  </section>
+
+  <section>
+    <h2>3. Application Health</h2>
+    
+    <h3>UI / Application Availability &mdash; <span class="badge badge-HEALTHY">HEALTHY</span></h3>
+    <p class="summary-text">UI Availability: 100.0% available (success=180, failure=0)</p>
+    
+    <ul class="evidence-list">
+      <li><strong>UI Availability:</strong> 100.0% available (success=180, failure=0)</li>
+    </ul>
+    
+    
+    <h3>Database Connection Health &mdash; <span class="badge badge-NOT_CONFIGURED">NOT CONFIGURED</span></h3>
+    <p class="summary-text">Database Connection: Not Configured</p>
+    
+    <ul class="evidence-list">
+      <li><strong>Configuration:</strong> One or more required environment variables are not set</li>
+    </ul>
+    
+    
+  </section>
+
+  <section>
+    <h2>4. Batch / Business Process Health</h2>
+    
+    <h3>Watchlist Import Completion &mdash; <span class="badge badge-NOT_PRESENT">NOT PRESENT</span></h3>
+    <p class="summary-text">Watchlist Import: Not Present</p>
+    
+    
+    <h3>Batch File Acquisition / Receipt &mdash; <span class="badge badge-FAIL">FAIL</span></h3>
+    <p class="summary-text">Checked 2 batch(es) (WorldCheck Download, Acquisition Status); worst status = FAIL</p>
+    
+    <ul class="evidence-list">
+      <li><strong>WorldCheck Download - failure evidence:</strong> Failed | 2026-08-11 08:34:38.297 | 08/11/26 18:34:37:runBatchWLM.sh - WARN: Feedback file creation failed with error code: 255</li><li><strong>Acquisition Status:</strong> No log entries on stream 'batch/i-0a1a72b531032dc24/batch/getDXVLandingFiles.log' in mgl-production-ApplicationLogs-1GIG4IOL2HSFZ within 24h</li>
+    </ul>
+    
+    
+    <h3>WLM / Screening Batch Completion &mdash; <span class="badge badge-FAIL">FAIL</span></h3>
+    <p class="summary-text">Checked 1 WLM/Screening batch(es) (WLM Status); worst status = FAIL</p>
+    
+    <ul class="evidence-list">
+      <li><strong>WLM Status - failure evidence:</strong> Failed | 2026-08-11 08:34:38.297 | 08/11/26 18:34:37:runBatchWLM.sh - WARN: Feedback file creation failed with error code: 255</li>
+    </ul>
+    
+    
+    <h3>AML Batch Completion &mdash; <span class="badge badge-NOT_PRESENT">NOT PRESENT</span></h3>
+    <p class="summary-text">AML Batch: Not Present</p>
+    
+    
+    <h3>CDD Completion / Consistency &mdash; <span class="badge badge-NOT_PRESENT">NOT PRESENT</span></h3>
+    <p class="summary-text">CDD: Not Present</p>
+    
+    
+    <h3>Batch Failure / Overrun &mdash; <span class="badge badge-NOT_PRESENT">NOT PRESENT</span></h3>
+    <p class="summary-text">Overrun Detection: Not Present</p>
+    
+    
+  </section>
+
+  <section>
+    <h2>5. Evidence &amp; Errors</h2>
+    <p class="summary-text">Detailed evidence supporting each check result is listed above, next to the relevant check. Any check that raised an unexpected error is listed below for follow-up.</p>
+    <table>
+      <tr><th>Check</th><th>Timestamp (UTC)</th><th>Error</th></tr>
+      
+    </table>
+  </section>
+
+  <footer>Generated automatically by DailyChecksFramework &mdash; SingleClientChecks. For SRE / Management review and daily audit evidence.</footer>
+</div>
+</body>
+</html>

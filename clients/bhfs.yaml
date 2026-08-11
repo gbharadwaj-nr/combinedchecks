@@ -1,0 +1,140 @@
+# BHFS client configuration for the Daily Health Check.
+# Account/role/log group/stream names sourced from the existing
+# SingleClientChecks/BHFS project (config.py + bootstrap.py), confirmed
+# against real BHFS infra via `aws logs start-query` per that project's config.py.
+
+aws:
+  account_id: "476149950471"
+  role_arn: "arn:aws:iam::476149950471:role/FinOpsAutomationRole"
+  profile: null
+  regions: []   # empty -> auto-discover enabled regions for the account
+
+rds:
+  enabled: true
+  production_only: true
+
+ec2:
+  enabled: true
+  tag_filters: []
+  production_only: true
+  memory_metric_namespace: "CWAgent"
+
+ui:
+  enabled: true
+  log_group: "/aws/lambda/bhfsproductionUIAvailabilityCheck"
+  query_hours: 3   # matches lookback_minutes=180 in the reference console query
+
+# No dedicated DXV dashboard check in the existing BHFS check list - Not Present.
+dxv:
+  enabled: false
+  tag_filters: []
+
+asg:
+  enabled: true
+  tag_filters: []
+  production_only: true
+
+kafka:
+  enabled: false
+  bootstrap_servers_env: "BHFS_KAFKA_BOOTSTRAP_SERVERS"
+  consumer_groups: []
+
+cloudwatch:
+  lookback_hours: 24
+  log_group_prefixes:
+    - "bhfs-production-ApplicationLogs-uu5ZxF4Mn8aS"
+    - "bhfs-production-SystemLogs-gNRVgqfVOlob"
+    - "bhfs-production-CloudFormationLogs-lgFRrcY9B9wE"
+    - "/aws/lambda/bhfsproductionUIAvailabilityCheck"
+  required_log_groups:
+    - "bhfs-production-ApplicationLogs-uu5ZxF4Mn8aS"
+    - "/aws/lambda/bhfsproductionUIAvailabilityCheck"
+  required_metrics:
+    - namespace: "AWS/RDS"
+      metric_name: "FreeStorageSpace"
+
+database:
+  enabled: true
+  engine: "postgresql"
+  host_env: "BHFS_DB_HOST"
+  port_env: "BHFS_DB_PORT"
+  name_env: "BHFS_DB_NAME"
+  user_env: "BHFS_DB_USER"
+  password_env: "BHFS_DB_PASSWORD"
+  timeout_seconds: 5
+
+# Maps to the existing "Factiva Import" check - confirms the daily Factiva FPFA
+# list import completed (searched in the reference across Application/System/
+# CloudFormation logs; ApplicationLogs alone covers the vast majority of hits).
+watchlist:
+  enabled: true
+  sources:
+    - name: "Factiva Import"
+      log_group: "bhfs-production-ApplicationLogs-uu5ZxF4Mn8aS"
+      query_hours: 24
+      completion_markers:
+        - "End of Factiva FPFA list import"
+
+# Maps to the existing "ACQ Success", "Bad Files", "Transaction File" and
+# "Envelope Processing" checks (Batch & File Processing / Feedback Files).
+batch_file:
+  enabled: true
+  batches:
+    - name: "ACQ Success"
+      log_group: "bhfs-production-ApplicationLogs-uu5ZxF4Mn8aS"
+      log_stream_pattern: "check_acq_success.log"
+      query_hours: 24
+    - name: "Bad Files"
+      log_group: "bhfs-production-ApplicationLogs-uu5ZxF4Mn8aS"
+      log_stream_pattern: "check_bad_files.log"
+      query_hours: 24
+      detail_regex: "(NetReveal_BAD\\S*\\.ZIP)"
+      detail_target: "status"
+      success_label: "Sent"
+      failure_label: "Not Sent"
+    - name: "Transaction File"
+      log_group: "bhfs-production-ApplicationLogs-uu5ZxF4Mn8aS"
+      query_hours: 24
+      completion_markers:
+        - "TRANSACTIONS_"
+        - "records within"
+    - name: "Envelope Processing"
+      log_group: "bhfs-production-ApplicationLogs-uu5ZxF4Mn8aS"
+      query_hours: 24
+      completion_markers:
+        - "ENVELOPE_"
+
+# Maps to the existing "WLM Batch" check (wlm_batch_monitoring.log).
+wlm:
+  enabled: true
+  batches:
+    - name: "WLM Batch"
+      log_group: "bhfs-production-ApplicationLogs-uu5ZxF4Mn8aS"
+      log_stream_pattern: "wlm_batch_monitoring.log"
+      query_hours: 24
+
+# Maps to the existing "AML Batch" check (aml_batch_monitoring.log).
+aml:
+  enabled: true
+  batches:
+    - name: "AML Batch"
+      log_group: "bhfs-production-ApplicationLogs-uu5ZxF4Mn8aS"
+      log_stream_pattern: "aml_batch_monitoring.log"
+      query_hours: 24
+
+# Maps to the existing "CDD Batch" check (cdd_batch_monitoring.log) - BHFS is
+# the only onboarded client so far with real CDD processing.
+cdd:
+  enabled: true
+  batches:
+    - name: "CDD Batch"
+      log_group: "bhfs-production-ApplicationLogs-uu5ZxF4Mn8aS"
+      log_stream_pattern: "cdd_batch_monitoring.log"
+      query_hours: 24
+
+# No start/completion timestamp evidence exists in the current BHFS check
+# scripts (only latest-message keyword checks) - left unconfigured rather
+# than inventing start/expected-completion markers that aren't backed by evidence.
+overrun:
+  enabled: false
+  batches: []

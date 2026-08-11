@@ -42,8 +42,10 @@ def _build_marker_query(markers, limit=_DEFAULT_LIMIT):
 
 
 def _build_log_stream_query(log_stream_pattern, limit=_DEFAULT_LIMIT):
-    pattern = log_stream_pattern.replace("/", "\\/")
-    return f"fields @timestamp, @message | filter @logStream like /{pattern}/ | sort @timestamp desc | limit {limit}"
+    # Quoted substring match, not /regex/ - some clients' stream names contain literal
+    # "/" (e.g. MGL's "batch/i-.../batch/norkom.log"), which breaks regex delimiters.
+    escaped = log_stream_pattern.replace('"', '\\"')
+    return f'fields @timestamp, @message | filter @logStream like "{escaped}" | sort @timestamp desc | limit {limit}'
 
 
 def _extract_detail(messages, pattern):
@@ -96,11 +98,12 @@ def _evaluate_by_log_stream(logs_client, entry, query_hours, detail):
     extracted = _extract_detail(messages, detail_pattern)
     latest = rows[0]
 
-    if any(_has_failure_keyword(m) for m in messages):
+    failing_row = next((row for row in rows if _has_failure_keyword(row.get("@message", ""))), None)
+    if failing_row is not None:
         display_name, status_label = _apply_detail(name, failure_label, entry, extracted)
         detail["status"] = "FAILED"
         detail["name"] = display_name
-        evidence_line = f"{status_label} | {latest.get('@timestamp')} | {latest.get('@message')}"
+        evidence_line = f"{status_label} | {failing_row.get('@timestamp')} | {failing_row.get('@message')}"
         return Status.FAIL, [(f"{display_name} - failure evidence", evidence_line)], detail
 
     display_name, status_label = _apply_detail(name, success_label, entry, extracted)

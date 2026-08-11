@@ -26,6 +26,19 @@ class ConfigLoaderTests(unittest.TestCase):
         self.assertIn("fleetcor", list_available_clients())
         self.assertNotIn("_defaults", list_available_clients())
 
+    def test_mgl_and_bhfs_configs_load(self):
+        for client_name in ("mgl", "bhfs"):
+            config = load_client_config(client_name)
+            self.assertEqual(config.client_name, client_name.upper())
+            self.assertIn("aws", config.raw)
+            self.assertTrue(config.get("aws", "account_id"))
+
+    def test_all_onboarded_clients_are_listed(self):
+        clients = list_available_clients()
+        self.assertIn("fleetcor", clients)
+        self.assertIn("mgl", clients)
+        self.assertIn("bhfs", clients)
+
 
 if __name__ == "__main__":
     unittest.main()
