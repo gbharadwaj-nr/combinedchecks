@@ -1,0 +1,10 @@
+# Generated daily health check reports - never commit these, they're build artifacts.
+output/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Local dev scratch files
+*.log

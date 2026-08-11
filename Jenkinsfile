@@ -34,6 +34,9 @@ pipeline {
     stages {
         stage('Setup') {
             steps {
+                // Guarantees archiveArtifacts only picks up this build's report, even if
+                // old output/ files were ever committed or left over from a prior build.
+                bat 'if exist output rmdir /s /q output'
                 bat '''
                 python -m pip install --upgrade pip
                 pip install -r requirements.txt
