@@ -23,8 +23,8 @@ import auth
 import region_discovery
 from checks import (
     aml_check, asg_check, batch_file_check, cdd_check, cloudwatch_check,
-    database_check, dxv_check, ec2_check, kafka_check, overrun_check,
-    rds_check, ui_check, watchlist_check, wlm_check,
+    database_check, dxv_check, ec2_check, efs_check, kafka_check, log_health_check,
+    overrun_check, rds_check, ui_check, watchlist_check, wlm_check,
 )
 from checks.base import run_check
 from config import ConfigError, load_client_config
@@ -47,9 +47,9 @@ class ClientResolutionError(Exception):
 
 # Order mirrors the report sections: infrastructure, application, batch/business.
 CHECK_MODULES = [
-    rds_check, ec2_check, dxv_check, asg_check, kafka_check, cloudwatch_check,
+    rds_check, ec2_check, dxv_check, asg_check, kafka_check, efs_check, cloudwatch_check,
     ui_check, database_check,
-    watchlist_check, batch_file_check, wlm_check, aml_check, cdd_check, overrun_check,
+    watchlist_check, batch_file_check, wlm_check, aml_check, cdd_check, log_health_check, overrun_check,
 ]
 
 

@@ -42,15 +42,36 @@ asg:
   production_only: true
 
 kafka:
-  enabled: false
-  bootstrap_servers_env: "FLEETCOR_KAFKA_BOOTSTRAP_SERVERS"
-  consumer_groups: []
+  # NOTE: no AWS/Kafka CloudWatch metrics or MSK clusters were found in this
+  # account/region when checked directly - the dashboard's "Kafka Consumer Lag"
+  # widget may live in a different account, region, or be Logs-Insights-based
+  # rather than a native metric. Confirm the real namespace/metric/dimension,
+  # then this will report real data instead of NO_DATA.
+  enabled: true
+  cluster_name: "fltcr-production"
+  metric_namespace: "AWS/Kafka"
+  metric_name: "SumOffsetLag"
+  dimension_name: "Cluster Name"
+  lag_warning_threshold: 1000
+  lag_critical_threshold: 10000
+
+efs:
+  enabled: true
+  warning_percent: 75
+  critical_percent: 90
+  filesystems:
+    - name: "EFS fs-0dabd9143238d32d6"
+      filesystem_id: "fs-0dabd9143238d32d6"
+    - name: "EFS fs-075f6e20969290f33"
+      filesystem_id: "fs-075f6e20969290f33"
 
 cloudwatch:
   lookback_hours: 24
-  # Real log groups used by FleetCor's existing check scripts (SingleClientChecks/FleetCor/config.py).
+  # Real log groups behind the fltcr-production-HealthCheck CloudWatch dashboard.
   log_group_prefixes:
     - "fltcr-production-ApplicationLogs-t0L7QoJyJRKY"
+    - "fltcr-production-SystemLogs-XMuMIIZ31HNw"
+    - "fltcr-production-CloudFormationLogs-6LU2BQOg1Z9k"
     - "/aws/lambda/fltcrproductionUIAvailabilityCheck"
   required_log_groups:
     - "fltcr-production-ApplicationLogs-t0L7QoJyJRKY"
@@ -69,69 +90,69 @@ database:
   password_env: "FLEETCOR_DB_PASSWORD"
   timeout_seconds: 5
 
-# FleetCor's watchlist infrastructure exists but is currently disabled in production
-# (confirmed via real logs: "No watchlist in use, exiting script.") - reported as
-# NOT CONFIGURED rather than a false COMPLETED/FAILED.
+# Simple, reusable application format: ACQ / WLM / AML / CDD. Every client is
+# expected to configure whichever of these four it actually has - the rest are
+# just left enabled: false (reported as "Not Present", not a failure).
+# FleetCor's watchlist infrastructure exists but is currently disabled in
+# production (real logs: "No watchlist in use, exiting script.") - not one of
+# the 4 standard checks, so left out entirely rather than shown as unavailable.
 watchlist:
-  enabled: true
-  title: "Watchlist Import (World-Check)"
-  sources:
-    - name: "World-Check Watchlist Import"
-      log_group: "fltcr-production-ApplicationLogs-t0L7QoJyJRKY"
-      log_stream_pattern: "downloadWatchlist.log"
-      query_hours: 24
-      not_configured_markers:
-        - "No watchlist in use"
+  enabled: false
+  sources: []
 
-# Batch File Acquisition (DPA) - landing-file polling/acquisition from the data provider.
+# ACQ - file acquisition/receipt confirmation.
 batch_file:
   enabled: true
-  title: "Batch File Acquisition (DPA)"
   batches:
-    - name: "Batch File Acquisition (DPA)"
-      log_group: "fltcr-production-ApplicationLogs-t0L7QoJyJRKY"
-      log_stream_pattern: "pollDXVLanding.log"
-      query_hours: 24
-
-# Batch Completion - overall daily batch-cycle status, checked every few minutes.
-wlm:
-  enabled: true
-  title: "Batch Completion"
-  batches:
-    - name: "Batch Completion"
-      log_group: "fltcr-production-ApplicationLogs-t0L7QoJyJRKY"
-      log_stream_pattern: "currentBatchStatus.log"
-      query_hours: 24
-
-# ACQ Feedback Flag - same evidence stream as the Infrastructure "DXV" check, viewed
-# here as an application-level acquisition-feedback confirmation (matches the real
-# FleetCor dashboard's separate "DXV" vs "ACQ Flags" checks on the same log stream).
-aml:
-  enabled: true
-  title: "ACQ Feedback Flag"
-  batches:
-    - name: "ACQ Feedback Flag"
+    - name: "ACQ"
       log_group: "fltcr-production-ApplicationLogs-t0L7QoJyJRKY"
       log_stream_pattern: "check_acq_success.log"
       query_hours: 168   # 7 days, matches the original 604800s console query
-      detail_regex: "(?i)(acq_success_\\S+)"   # e.g. acq_success_20260807.flag
-      detail_target: "status"
-      success_label: "Sent"
-      failure_label: "Not Sent"
 
-# Bad-record Output - NetReveal_BAD ZIP generation (feedback of rejected records).
+# WLM - watchlist management/screening batch.
+wlm:
+  enabled: true
+  batches:
+    - name: "WLM"
+      log_group: "fltcr-production-ApplicationLogs-t0L7QoJyJRKY"
+      log_stream_pattern: "wlm_batch_monitoring.log"
+      query_hours: 168   # 7 days, matches the original 604800s console query
+
+# AML - anti-money-laundering batch.
+aml:
+  enabled: true
+  batches:
+    - name: "AML"
+      log_group: "fltcr-production-ApplicationLogs-t0L7QoJyJRKY"
+      log_stream_pattern: "aml_batch_monitoring.log"
+      query_hours: 3   # 3 hours, matches the original 10800s console query
+
+# CDD - customer due diligence SLA monitoring.
 cdd:
   enabled: true
-  title: "Bad-record Output"
   batches:
-    - name: "Bad-record Output"
+    - name: "CDD"
+      log_group: "fltcr-production-ApplicationLogs-t0L7QoJyJRKY"
+      log_stream_pattern: "CDD_SLA_Daily_Messages.log"
+      query_hours: 24
+
+# Simple catch-all for the remaining fltcr-production-HealthCheck dashboard
+# widgets: add one entry per log stream to monitor - no new code required.
+log_health:
+  enabled: true
+  entries:
+    - name: "Payment Ingestion"
+      log_group: "fltcr-production-ApplicationLogs-t0L7QoJyJRKY"
+      log_stream_pattern: "payment_ingestion_monitoring.log"
+      query_hours: 24
+    - name: "DXV Landing"
+      log_group: "fltcr-production-ApplicationLogs-t0L7QoJyJRKY"
+      log_stream_pattern: "pollDXVLanding.log"
+      query_hours: 24
+    - name: "Bad Files"
       log_group: "fltcr-production-ApplicationLogs-t0L7QoJyJRKY"
       log_stream_pattern: "check_bad_files.log"
-      query_hours: 168   # 7 days, matches the original 604800s console query
-      detail_regex: "(NetReveal_BAD_\\d+\\.ZIP)"
-      detail_target: "status"
-      success_label: "Sent"
-      failure_label: "Not Sent"
+      query_hours: 168
 
 # No start/completion timestamp evidence exists in the current FleetCor check
 # scripts (only latest-message keyword checks) - left unconfigured rather than
@@ -139,3 +160,4 @@ cdd:
 overrun:
   enabled: false
   batches: []
+

@@ -1,4 +1,9 @@
-"""WLM / Screening batch completion check (Requirement 11)."""
+"""WLM - watchlist management/screening batch check (Requirement 11).
+
+One of the four common application-level batch checks reused across clients
+(ACQ, WLM, AML, CDD). Not every client has all four - absent ones are simply
+NOT_PRESENT (excluded from the report's scored table, not shown as a failure).
+"""
 from checks.base import CheckResult, Status, worse
 from checks.log_batch_common import evaluate_entry_with_region_discovery
 from utils.logging_utils import get_logger
@@ -6,7 +11,7 @@ from utils.logging_utils import get_logger
 logger = get_logger(__name__)
 
 KEY = "wlm"
-TITLE = "WLM / Screening Batch Completion"
+TITLE = "WLM"
 CATEGORY = "batch"
 
 
@@ -14,7 +19,7 @@ def check(session, config, regions):
     section = config.section("wlm")
     title = section.get("title", TITLE)
     result = CheckResult(key=KEY, title=title, category=CATEGORY, status=Status.NOT_PRESENT,
-                          summary="WLM / Screening Batch: Not Present")
+                          summary="WLM: Not Present")
     batches = section.get("batches") or []
     if not section.get("enabled", False) or not batches:
         return result

@@ -1,4 +1,9 @@
-"""CDD completion / consistency check (Requirement 13)."""
+"""CDD - customer due diligence batch check (Requirement 13).
+
+One of the four common application-level batch checks reused across clients
+(ACQ, WLM, AML, CDD). Not every client has all four - absent ones are simply
+NOT_PRESENT (excluded from the report's scored table, not shown as a failure).
+"""
 from checks.base import CheckResult, Status, worse
 from checks.log_batch_common import evaluate_entry_with_region_discovery
 from utils.logging_utils import get_logger
@@ -6,7 +11,7 @@ from utils.logging_utils import get_logger
 logger = get_logger(__name__)
 
 KEY = "cdd"
-TITLE = "CDD Completion / Consistency"
+TITLE = "CDD"
 CATEGORY = "batch"
 
 

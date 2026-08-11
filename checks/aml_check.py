@@ -1,4 +1,9 @@
-"""AML batch completion check (Requirement 12)."""
+"""AML - anti-money-laundering batch check (Requirement 12).
+
+One of the four common application-level batch checks reused across clients
+(ACQ, WLM, AML, CDD). Not every client has all four - absent ones are simply
+NOT_PRESENT (excluded from the report's scored table, not shown as a failure).
+"""
 from checks.base import CheckResult, Status, worse
 from checks.log_batch_common import evaluate_entry_with_region_discovery
 from utils.logging_utils import get_logger
@@ -6,7 +11,7 @@ from utils.logging_utils import get_logger
 logger = get_logger(__name__)
 
 KEY = "aml"
-TITLE = "AML Batch Completion"
+TITLE = "AML"
 CATEGORY = "batch"
 
 
@@ -14,7 +19,7 @@ def check(session, config, regions):
     section = config.section("aml")
     title = section.get("title", TITLE)
     result = CheckResult(key=KEY, title=title, category=CATEGORY, status=Status.NOT_PRESENT,
-                          summary="AML Batch: Not Present")
+                          summary="AML: Not Present")
     batches = section.get("batches") or []
     if not section.get("enabled", False) or not batches:
         return result

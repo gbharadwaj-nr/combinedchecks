@@ -1,4 +1,9 @@
-"""Batch File Acquisition / Receipt check (Requirement 10)."""
+"""ACQ - batch file acquisition/receipt check (Requirement 10).
+
+One of the four common application-level batch checks reused across clients
+(ACQ, WLM, AML, CDD). Not every client has all four - absent ones are simply
+NOT_PRESENT (excluded from the report's scored table, not shown as a failure).
+"""
 from checks.base import CheckResult, Status, worse
 from checks.log_batch_common import evaluate_entry_with_region_discovery
 from utils.logging_utils import get_logger
@@ -6,7 +11,7 @@ from utils.logging_utils import get_logger
 logger = get_logger(__name__)
 
 KEY = "batch_file"
-TITLE = "Batch File Acquisition / Receipt"
+TITLE = "ACQ"
 CATEGORY = "batch"
 
 
@@ -14,7 +19,7 @@ def check(session, config, regions):
     section = config.section("batch_file")
     title = section.get("title", TITLE)
     result = CheckResult(key=KEY, title=title, category=CATEGORY, status=Status.NOT_PRESENT,
-                          summary="Batch File Acquisition: Not Present")
+                          summary="ACQ: Not Present")
     batches = section.get("batches") or []
     if not section.get("enabled", False) or not batches:
         return result
