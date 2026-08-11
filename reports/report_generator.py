@@ -46,10 +46,11 @@ def generate_report(client_name, results, run_started_at):
         categories=categories,
     )
 
-    client_dir = os.path.join(OUTPUT_DIR, client_name.upper())
-    os.makedirs(client_dir, exist_ok=True)
-    filename = f"daily_health_check_{datetime.now().strftime('%Y-%m-%d_%H%M')}.html"
-    output_path = os.path.join(client_dir, filename)
+    # Flat output/ directory (no per-client subfolder) - keeps every report one click away,
+    # sortable/searchable by the client-name prefix baked into the filename.
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    filename = f"{client_name.upper()}_daily_health_check_{datetime.now().strftime('%Y-%m-%d_%H%M')}.html"
+    output_path = os.path.join(OUTPUT_DIR, filename)
     with open(output_path, "w", encoding="utf-8") as fh:
         fh.write(html)
 

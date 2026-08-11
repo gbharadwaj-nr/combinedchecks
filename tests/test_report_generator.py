@@ -18,6 +18,9 @@ class ReportGeneratorTests(unittest.TestCase):
                 from reports.report_generator import generate_report
                 path = generate_report("FLEETCOR", results, datetime.now(timezone.utc))
                 self.assertTrue(os.path.isfile(path))
+                # Flat output directory - report file lives directly under OUTPUT_DIR, no subfolder.
+                self.assertEqual(os.path.dirname(path), tmp_dir)
+                self.assertTrue(os.path.basename(path).startswith("FLEETCOR_daily_health_check_"))
                 with open(path, encoding="utf-8") as fh:
                     content = fh.read()
                 self.assertIn("Daily Health Check", content)
