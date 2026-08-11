@@ -42,12 +42,9 @@ asg:
   production_only: true
 
 kafka:
-  # NOTE: no AWS/Kafka CloudWatch metrics or MSK clusters were found in this
-  # account/region when checked directly - the dashboard's "Kafka Consumer Lag"
-  # widget may live in a different account, region, or be Logs-Insights-based
-  # rather than a native metric. Confirm the real namespace/metric/dimension,
-  # then this will report real data instead of NO_DATA.
-  enabled: true
+  # Not required for now - no confirmed Kafka Consumer Lag metric source yet.
+  # Re-enable once the real namespace/metric/dimension is confirmed.
+  enabled: false
   cluster_name: "fltcr-production"
   metric_namespace: "AWS/Kafka"
   metric_name: "SumOffsetLag"
@@ -138,13 +135,11 @@ cdd:
 
 # Simple catch-all for the remaining fltcr-production-HealthCheck dashboard
 # widgets: add one entry per log stream to monitor - no new code required.
+# ("Payment Ingestion" removed for now - not required yet and the real log
+# stream name wasn't confirmed; closest match found was check_payment_response.log.)
 log_health:
   enabled: true
   entries:
-    - name: "Payment Ingestion"
-      log_group: "fltcr-production-ApplicationLogs-t0L7QoJyJRKY"
-      log_stream_pattern: "payment_ingestion_monitoring.log"
-      query_hours: 24
     - name: "DXV Landing"
       log_group: "fltcr-production-ApplicationLogs-t0L7QoJyJRKY"
       log_stream_pattern: "pollDXVLanding.log"
