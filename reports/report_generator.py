@@ -23,6 +23,26 @@ def _overall_status(results):
     return Status.HEALTHY
 
 
+# These statuses mean "this check doesn't apply to this client's environment" - never
+# a failure, but a table full of "NOT PRESENT"/"NOT CONFIGURED" reads to a client like
+# missing/incomplete work. Presented separately (as expected scope exclusions) instead
+# of mixed into the main checks table as if something were broken.
+_OUT_OF_SCOPE_STATUSES = {Status.NOT_PRESENT, Status.NOT_CONFIGURED}
+
+
+def _split_in_scope(results):
+    in_scope = [r for r in results if r.status not in _OUT_OF_SCOPE_STATUSES]
+    out_of_scope = [r for r in results if r.status in _OUT_OF_SCOPE_STATUSES]
+    return in_scope, out_of_scope
+
+
+def _group_by_category(results):
+    grouped = {"infrastructure": [], "application": [], "batch": []}
+    for result in results:
+        grouped.setdefault(result.category, []).append(result)
+    return grouped
+
+
 def generate_report(client_name, results, run_started_at):
     """Render and persist the consolidated HTML report. Returns the output file path."""
     env = Environment(
@@ -31,9 +51,9 @@ def generate_report(client_name, results, run_started_at):
     )
     template = env.get_template("daily_health_check.html.j2")
 
-    categories = {"infrastructure": [], "application": [], "batch": []}
-    for result in results:
-        categories.setdefault(result.category, []).append(result)
+    in_scope_results, out_of_scope_results = _split_in_scope(results)
+    categories = _group_by_category(in_scope_results)
+    out_of_scope_by_category = _group_by_category(out_of_scope_results)
 
     overall = _overall_status(results)
 
@@ -42,8 +62,13 @@ def generate_report(client_name, results, run_started_at):
         generated_at=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         run_started_at=run_started_at.strftime("%Y-%m-%d %H:%M:%S"),
         overall_status=overall.value,
-        results=results,
+        results=in_scope_results,
+        all_results=results,
+        out_of_scope_results=out_of_scope_results,
         categories=categories,
+        out_of_scope_by_category=out_of_scope_by_category,
+        in_scope_count=len(in_scope_results),
+        total_check_count=len(results),
     )
 
     # Flat output/ directory (no per-client subfolder) - keeps every report one click away,

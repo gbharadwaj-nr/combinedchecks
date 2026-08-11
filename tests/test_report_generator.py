@@ -26,7 +26,13 @@ class ReportGeneratorTests(unittest.TestCase):
                 self.assertIn("Daily Health Check", content)
                 self.assertIn("FLEETCOR", content)
                 self.assertIn("Overall Status", content)
-                self.assertIn("DXV: Not Present", content)
+                # NOT_PRESENT/NOT_CONFIGURED checks are pulled out of the main table into a
+                # compact "out of scope" note instead of looking like gaps/failures.
+                self.assertIn("Out of scope for this environment", content)
+                self.assertIn("DXV Instance Availability", content)
+                # The CSS still defines a .badge-NOT_PRESENT style, but it should never be
+                # *used* on a rendered badge span since those checks are excluded from the table.
+                self.assertNotIn('class="badge badge-NOT_PRESENT"', content)
         finally:
             shutil.rmtree(tmp_dir, ignore_errors=True)
 
@@ -38,6 +44,18 @@ class ReportGeneratorTests(unittest.TestCase):
             CheckResult(key="b", title="B", category="infrastructure", status=Status.NOT_CONFIGURED, summary="x"),
         ]
         self.assertEqual(_overall_status(results).value, "HEALTHY")
+
+    def test_split_in_scope_separates_not_present_and_not_configured(self):
+        from checks.base import CheckResult, Status
+        from reports.report_generator import _split_in_scope
+        results = [
+            CheckResult(key="a", title="A", category="infrastructure", status=Status.HEALTHY, summary="x"),
+            CheckResult(key="b", title="B", category="infrastructure", status=Status.NOT_PRESENT, summary="x"),
+            CheckResult(key="c", title="C", category="application", status=Status.NOT_CONFIGURED, summary="x"),
+        ]
+        in_scope, out_of_scope = _split_in_scope(results)
+        self.assertEqual([r.key for r in in_scope], ["a"])
+        self.assertEqual([r.key for r in out_of_scope], ["b", "c"])
 
 
 if __name__ == "__main__":

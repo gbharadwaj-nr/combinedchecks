@@ -24,6 +24,8 @@
   .badge-NOT_PRESENT, .badge-NOT_CONFIGURED { background:#6b7280; }
   .evidence-list { margin:4px 0 0 0; padding-left:18px; font-size:12px; color:#374151; }
   .summary-text { font-size:12px; color:#52606d; margin: 2px 0 0 0; }
+  .scope-note { font-size:12px; color:#52606d; background:#eef2f7; border-radius:6px; padding:10px 14px; margin-top:12px; }
+  .scope-note strong { color:#1f2933; }
   footer { font-size:11px; color:#94a3b8; margin-top:40px; text-align:center; }
 </style>
 </head>
@@ -33,6 +35,7 @@
   <p class="subtitle">Run started: {{ run_started_at }} UTC &nbsp;|&nbsp; Report generated: {{ generated_at }}</p>
 
   <div class="overall-banner overall-{{ overall_status }}">Overall Status: {{ overall_status }}</div>
+  <p class="subtitle">{{ in_scope_count }} of {{ total_check_count }} daily checks apply to this client's environment and are scored below{% if out_of_scope_results %} &mdash; the remaining {{ out_of_scope_results|length }} are out of scope for this environment (see note below){% endif %}.</p>
 
   <section>
     <h2>1. Overall Health Summary</h2>
@@ -46,6 +49,9 @@
       </tr>
       {% endfor %}
     </table>
+    {% if out_of_scope_results %}
+    <p class="scope-note"><strong>Out of scope for this environment:</strong> the following checks do not apply to {{ client_name }} and are excluded from scoring (not treated as failures) &mdash; {{ out_of_scope_results|map(attribute='title')|join(', ') }}.</p>
+    {% endif %}
   </section>
 
   <section>
@@ -59,6 +65,9 @@
     </ul>
     {% endif %}
     {% endfor %}
+    {% if out_of_scope_by_category.infrastructure %}
+    <p class="scope-note">Not applicable to this environment: {{ out_of_scope_by_category.infrastructure|map(attribute='title')|join(', ') }}.</p>
+    {% endif %}
   </section>
 
   <section>
@@ -72,6 +81,9 @@
     </ul>
     {% endif %}
     {% endfor %}
+    {% if out_of_scope_by_category.application %}
+    <p class="scope-note">Not applicable to this environment: {{ out_of_scope_by_category.application|map(attribute='title')|join(', ') }}.</p>
+    {% endif %}
   </section>
 
   <section>
@@ -85,6 +97,9 @@
     </ul>
     {% endif %}
     {% endfor %}
+    {% if out_of_scope_by_category.batch %}
+    <p class="scope-note">Not applicable to this environment: {{ out_of_scope_by_category.batch|map(attribute='title')|join(', ') }}.</p>
+    {% endif %}
   </section>
 
   <section>
@@ -92,7 +107,7 @@
     <p class="summary-text">Detailed evidence supporting each check result is listed above, next to the relevant check. Any check that raised an unexpected error is listed below for follow-up.</p>
     <table>
       <tr><th>Check</th><th>Timestamp (UTC)</th><th>Error</th></tr>
-      {% for r in results if r.error %}
+      {% for r in all_results if r.error %}
       <tr><td>{{ r.title }}</td><td>{{ r.timestamp }}</td><td>{{ r.error }}</td></tr>
       {% endfor %}
     </table>
