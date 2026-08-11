@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Daily Health Check - FLEETCOR</title>
+<style>
+  body { font-family: 'Segoe UI', Arial, sans-serif; background:#f4f6f8; color:#1f2933; margin:0; padding:0; }
+  .container { max-width: 1000px; margin: 0 auto; padding: 24px; }
+  h1 { font-size: 22px; margin-bottom: 4px; }
+  .subtitle { color:#52606d; margin-top:0; margin-bottom:24px; font-size:13px; }
+  .overall-banner { padding:14px 20px; border-radius:6px; font-size:18px; font-weight:600; margin-bottom:24px; color:#fff; }
+  .overall-HEALTHY { background:#1f9d55; }
+  .overall-WARNING { background:#d97706; }
+  .overall-CRITICAL { background:#c0362c; }
+  table { width:100%; border-collapse: collapse; margin-bottom: 28px; background:#fff; }
+  th, td { text-align:left; padding:8px 12px; border-bottom:1px solid #e2e8f0; font-size:13px; vertical-align:top; }
+  th { background:#eef2f7; font-weight:600; }
+  section h2 { font-size:17px; border-bottom:2px solid #cbd5e1; padding-bottom:6px; margin-top:36px; }
+  section h3 { font-size:14px; margin-bottom:4px; margin-top:20px; }
+  .badge { display:inline-block; padding:3px 10px; border-radius:10px; font-size:12px; font-weight:600; color:#fff; }
+  .badge-HEALTHY, .badge-COMPLETED, .badge-AVAILABLE { background:#1f9d55; }
+  .badge-WARNING, .badge-NO_DATA { background:#d97706; }
+  .badge-CRITICAL, .badge-FAIL, .badge-ERROR { background:#c0362c; }
+  .badge-NOT_PRESENT, .badge-NOT_CONFIGURED { background:#6b7280; }
+  .evidence-list { margin:4px 0 0 0; padding-left:18px; font-size:12px; color:#374151; }
+  .summary-text { font-size:12px; color:#52606d; margin: 2px 0 0 0; }
+  footer { font-size:11px; color:#94a3b8; margin-top:40px; text-align:center; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Daily Health Check &mdash; FLEETCOR</h1>
+  <p class="subtitle">Run started: 2026-08-11 08:25:18 UTC &nbsp;|&nbsp; Report generated: 2026-08-11 13:57:37</p>
+
+  <div class="overall-banner overall-CRITICAL">Overall Status: CRITICAL</div>
+
+  <section>
+    <h2>1. Overall Health Summary</h2>
+    <table>
+      <tr><th>Check</th><th>Status</th><th>Summary</th></tr>
+      
+      <tr>
+        <td>RDS Availability / Status</td>
+        <td><span class="badge badge-HEALTHY">HEALTHY</span></td>
+        <td>1 RDS resource(s) checked; worst storage health = HEALTHY</td>
+      </tr>
+      
+      <tr>
+        <td>EC2 Instance and System Health</td>
+        <td><span class="badge badge-HEALTHY">HEALTHY</span></td>
+        <td>6 instance(s) checked; worst health = HEALTHY</td>
+      </tr>
+      
+      <tr>
+        <td>DXV Instance Availability</td>
+        <td><span class="badge badge-AVAILABLE">AVAILABLE</span></td>
+        <td>DXV availability: AVAILABLE</td>
+      </tr>
+      
+      <tr>
+        <td>ASG Health</td>
+        <td><span class="badge badge-HEALTHY">HEALTHY</span></td>
+        <td>11 ASG(s) checked; status = HEALTHY</td>
+      </tr>
+      
+      <tr>
+        <td>Kafka Consumer Details</td>
+        <td><span class="badge badge-NOT_PRESENT">NOT PRESENT</span></td>
+        <td>Kafka: Not Present</td>
+      </tr>
+      
+      <tr>
+        <td>CloudWatch API Health</td>
+        <td><span class="badge badge-HEALTHY">HEALTHY</span></td>
+        <td>CloudWatch API Health: HEALTHY</td>
+      </tr>
+      
+      <tr>
+        <td>UI / Application Availability</td>
+        <td><span class="badge badge-FAIL">FAIL</span></td>
+        <td>1 of 1 endpoint(s) unavailable: Fleetcor Portal</td>
+      </tr>
+      
+      <tr>
+        <td>Database Connection Health</td>
+        <td><span class="badge badge-NOT_CONFIGURED">NOT CONFIGURED</span></td>
+        <td>Database Connection: Not Configured</td>
+      </tr>
+      
+      <tr>
+        <td>Watchlist Import Completion</td>
+        <td><span class="badge badge-NOT_PRESENT">NOT PRESENT</span></td>
+        <td>Watchlist Import: Not Present</td>
+      </tr>
+      
+      <tr>
+        <td>Batch File Acquisition / Receipt</td>
+        <td><span class="badge badge-COMPLETED">COMPLETED</span></td>
+        <td>Checked 2 batch(es) (ACQ Flags, Bad Records); worst status = COMPLETED</td>
+      </tr>
+      
+      <tr>
+        <td>WLM / Screening Batch Completion</td>
+        <td><span class="badge badge-COMPLETED">COMPLETED</span></td>
+        <td>Checked 1 WLM/Screening batch(es) (Batch Files (20260810)); worst status = COMPLETED</td>
+      </tr>
+      
+      <tr>
+        <td>AML Batch Completion</td>
+        <td><span class="badge badge-COMPLETED">COMPLETED</span></td>
+        <td>Checked 1 AML batch(es) (AML Batch); worst status = COMPLETED</td>
+      </tr>
+      
+      <tr>
+        <td>CDD Completion / Consistency</td>
+        <td><span class="badge badge-NOT_PRESENT">NOT PRESENT</span></td>
+        <td>CDD: Not Present</td>
+      </tr>
+      
+      <tr>
+        <td>Batch Failure / Overrun</td>
+        <td><span class="badge badge-NOT_PRESENT">NOT PRESENT</span></td>
+        <td>Overrun Detection: Not Present</td>
+      </tr>
+      
+    </table>
+  </section>
+
+  <section>
+    <h2>2. Infrastructure Health</h2>
+    
+    <h3>RDS Availability / Status &mdash; <span class="badge badge-HEALTHY">HEALTHY</span></h3>
+    <p class="summary-text">1 RDS resource(s) checked; worst storage health = HEALTHY</p>
+    
+    <ul class="evidence-list">
+      <li><strong>fltcr-production-databaseresources-14bfde14w-eimdb-ha5z3yckxtp0:</strong> engine=postgres | status=available | region=ca-central-1 | multi_az=True | storage_used=70.8% | health=HEALTHY</li>
+    </ul>
+    
+    
+    <h3>EC2 Instance and System Health &mdash; <span class="badge badge-HEALTHY">HEALTHY</span></h3>
+    <p class="summary-text">6 instance(s) checked; worst health = HEALTHY</p>
+    
+    <ul class="evidence-list">
+      <li><strong>i-0a2240574869eacfc (dmz.production.fltcr.nrod):</strong> state=running | system=ok | instance=ok | az=ca-central-1b | cpu=5.9% (HEALTHY) | Memory: Not Available</li><li><strong>i-01fb43de9bcae4ff6 (batch.production.fltcr.nrod):</strong> state=running | system=ok | instance=ok | az=ca-central-1b | cpu=1.5% (HEALTHY) | Memory: Not Available</li><li><strong>i-043ccef1466174f1c (smbd.production.fltcr.nrod):</strong> state=running | system=ok | instance=ok | az=ca-central-1b | cpu=1.5% (HEALTHY) | Memory: Not Available</li><li><strong>i-06644013d3f46d4f7 (app2.production.fltcr.nrod):</strong> state=running | system=ok | instance=ok | az=ca-central-1b | cpu=2.1% (HEALTHY) | Memory: Not Available</li><li><strong>i-05f984e145ea6487c (dmz.production.fltcr.nrod):</strong> state=running | system=ok | instance=ok | az=ca-central-1a | cpu=5.3% (HEALTHY) | Memory: Not Available</li><li><strong>i-02153f4315fb7a760 (app1.production.fltcr.nrod):</strong> state=running | system=ok | instance=ok | az=ca-central-1a | cpu=5.6% (HEALTHY) | Memory: Not Available</li>
+    </ul>
+    
+    
+    <h3>DXV Instance Availability &mdash; <span class="badge badge-AVAILABLE">AVAILABLE</span></h3>
+    <p class="summary-text">DXV availability: AVAILABLE</p>
+    
+    <ul class="evidence-list">
+      <li><strong>DXV Acquisition - evidence:</strong> Completed | 2026-08-11 08:00:02.007 | Aug 11 02:30	aml_success_20260810.flag</li>
+    </ul>
+    
+    
+    <h3>ASG Health &mdash; <span class="badge badge-HEALTHY">HEALTHY</span></h3>
+    <p class="summary-text">11 ASG(s) checked; status = HEALTHY</p>
+    
+    <ul class="evidence-list">
+      <li><strong>fltcr-production-computeAnalyticsResources-9A3YUJGMQ0CJ-AnalyticsAutoScalingGroup-EY0T34K83DQ9:</strong> desired=0 min=0 max=1 in_service=0 unhealthy=0 region=ca-central-1</li><li><strong>fltcr-production-computeAppResources-1P94UR6E5DAG5-AppAutoScalingGroupBackup-1QHFALS9ARBBA:</strong> desired=1 min=1 max=1 in_service=1 unhealthy=0 region=ca-central-1</li><li><strong>fltcr-production-computeAppResources-1P94UR6E5DAG5-AppAutoScalingGroupPrimary-1EMXRWSK6GXS1:</strong> desired=1 min=1 max=1 in_service=1 unhealthy=0 region=ca-central-1</li><li><strong>fltcr-production-computeBatchResources-1XL7ZJY4NGWLS-BatchAutoScalingGroup-1EC6I4F7M6P1K:</strong> desired=1 min=1 max=1 in_service=1 unhealthy=0 region=ca-central-1</li><li><strong>fltcr-production-computeDMZResources-1ASKNYTM39LZX-DMZAutoScalingGroupPrimary-18ZNL60D4Z71C:</strong> desired=2 min=1 max=3 in_service=2 unhealthy=0 region=ca-central-1</li><li><strong>fltcr-production-computeRTDEResources-1164M9S497MVO-RTDEAutoScalingGroup-APO3W91CJXKQ:</strong> desired=0 min=0 max=1 in_service=0 unhealthy=0 region=ca-central-1</li><li><strong>fltcr-production-computeRealTimeAppResources-JGJVF472RYM0-RealTimeAppAutoScalingGroupBackup-7ZBKVUpPSNvm:</strong> desired=0 min=0 max=0 in_service=0 unhealthy=0 region=ca-central-1</li><li><strong>fltcr-production-computeRealTimeAppResources-JGJVF472RYM0-RealTimeAppAutoScalingGroupPrimary-a3SnqzPGi9uN:</strong> desired=0 min=0 max=0 in_service=0 unhealthy=0 region=ca-central-1</li><li><strong>fltcr-production-computeSMBDResources-1U4A4328FY308-SMBDAutoScalingGroup-12PLQX4G9Y8I1:</strong> desired=1 min=1 max=1 in_service=1 unhealthy=0 region=ca-central-1</li><li><strong>fltcr-production-computeWLM247Resources-1NYO61M336FEE-IndexNodeAutoScalingGroup-fRxD0TA8WIh7:</strong> desired=0 min=0 max=1 in_service=0 unhealthy=0 region=ca-central-1</li><li><strong>fltcr-production-computeWLM247Resources-1NYO61M336FEE-ProcNodeAutoScalingGroup-01JY3SAyNmVf:</strong> desired=0 min=0 max=1 in_service=0 unhealthy=0 region=ca-central-1</li>
+    </ul>
+    
+    
+    <h3>Kafka Consumer Details &mdash; <span class="badge badge-NOT_PRESENT">NOT PRESENT</span></h3>
+    <p class="summary-text">Kafka: Not Present</p>
+    
+    
+    <h3>CloudWatch API Health &mdash; <span class="badge badge-HEALTHY">HEALTHY</span></h3>
+    <p class="summary-text">CloudWatch API Health: HEALTHY</p>
+    
+    <ul class="evidence-list">
+      <li><strong>Log groups discovered:</strong> 2</li><li><strong>Metrics discovered:</strong> 1</li>
+    </ul>
+    
+    
+  </section>
+
+  <section>
+    <h2>3. Application Health</h2>
+    
+    <h3>UI / Application Availability &mdash; <span class="badge badge-FAIL">FAIL</span></h3>
+    <p class="summary-text">1 of 1 endpoint(s) unavailable: Fleetcor Portal</p>
+    
+    <ul class="evidence-list">
+      <li><strong>Fleetcor Portal:</strong> UI Availability: UNAVAILABLE | HTTP Status: None | Response Time: 0.24 sec | Reason: HTTPSConnectionPool(host='fleetcor.example.com', port=443): Max retries exceeded with url: /health (Caused by NameResolutionError("HTTPSConnection(host='fleetcor.example.com', port=443): Failed to resolve 'fleetcor.example.com' ([Errno 11002] getaddrinfo failed)"))</li>
+    </ul>
+    
+    
+    <h3>Database Connection Health &mdash; <span class="badge badge-NOT_CONFIGURED">NOT CONFIGURED</span></h3>
+    <p class="summary-text">Database Connection: Not Configured</p>
+    
+    <ul class="evidence-list">
+      <li><strong>Configuration:</strong> One or more required environment variables are not set</li>
+    </ul>
+    
+    
+  </section>
+
+  <section>
+    <h2>4. Batch / Business Process Health</h2>
+    
+    <h3>Watchlist Import Completion &mdash; <span class="badge badge-NOT_PRESENT">NOT PRESENT</span></h3>
+    <p class="summary-text">Watchlist Import: Not Present</p>
+    
+    
+    <h3>Batch File Acquisition / Receipt &mdash; <span class="badge badge-COMPLETED">COMPLETED</span></h3>
+    <p class="summary-text">Checked 2 batch(es) (ACQ Flags, Bad Records); worst status = COMPLETED</p>
+    
+    <ul class="evidence-list">
+      <li><strong>ACQ Flags - evidence:</strong> Sent (acq_success_20260810.flag) | 2026-08-11 08:00:02.007 | Aug 10 23:40	NetReveal_BAD_20260810.ZIP.PGP</li><li><strong>Bad Records - evidence:</strong> Sent (NetReveal_BAD_20260810.ZIP) | 2026-08-11 08:00:02.094 | 08/11/26 04:00:01:check_bad_files.sh - Found BAD files: NetReveal_BAD_20260810.ZIP.FLAG</li>
+    </ul>
+    
+    
+    <h3>WLM / Screening Batch Completion &mdash; <span class="badge badge-COMPLETED">COMPLETED</span></h3>
+    <p class="summary-text">Checked 1 WLM/Screening batch(es) (Batch Files (20260810)); worst status = COMPLETED</p>
+    
+    <ul class="evidence-list">
+      <li><strong>Batch Files (20260810) - evidence:</strong> Completed | 2026-08-11 08:20:05.006 |  20260810     | AMLDET_SmbdProcessing |              | Y       | 2026-08-11 02:29:26.488
+ 20260807     | AMLDET_SmbdProcessing |              | Y       | 2026-08-08 02:38:26.487
+ 20260806     | AMLDET_SmbdProcessing |              | Y       | 2026-08-07 02:14:26.473
+ 20260805     | AMLDET_SmbdProcessing |              | Y       | 2026-08-06 05:23:56.516
+ 20260803     | AMLDET_SmbdProcessing |              | Y       | 2026-08-04 01:52:56.482
+ 20260801     | AMLDET_SmbdProcessing |              | Y       | 2026-08-01 23:01:56.505
+ 20260731     | AMLDET_SmbdProcessing |              | Y       | 2026-08-01 03:04:56.486
+ 20260730     | AMLDET_SmbdProcessing |              | Y       | 2026-07-31 02:04:26.477
+ 20260729     | AMLDET_SmbdProcessing |              | Y       | 2026-07-30 01:52:26.485
+ 20260728     | AMLDET_SmbdProcessing |              | Y       | 2026-07-29 01:59:56.527</li>
+    </ul>
+    
+    
+    <h3>AML Batch Completion &mdash; <span class="badge badge-COMPLETED">COMPLETED</span></h3>
+    <p class="summary-text">Checked 1 AML batch(es) (AML Batch); worst status = COMPLETED</p>
+    
+    <ul class="evidence-list">
+      <li><strong>AML Batch - evidence:</strong> Completed | 2026-08-11 08:20:05.007 |  2257 | 2026-08-08 00:00:00 | 2026-08-10 23:59:59 | 15       | success      | SUCCEEDED |              | SUSPICIOUS_ACTIVITY | N/A        | /opt/netreveal/smbd/amlsmbd | AMLORCHLivyCallSmbdProcessingJob | nrod_batch  | 2026-08-10 23:38:26.447258 | 2026-08-11 02:28:56.549233 | 2026-08-10 23:39:26.549067 | 2026-08-11 02:28:26.542524 | AML_ProcessingAndTagging | 
+ 2256 | 2026-08-07 00:00:00 | 2026-08-07 23:59:59 | 14       | success      | SUCCEEDED |              | SUSPICIOUS_ACTIVITY | N/A        | /opt/netreveal/smbd/amlsmbd | AMLORCHLivyCallSmbdProcessingJob | nrod_batch  | 2026-08-07 23:36:56.450328 | 2026-08-08 02:37:56.579323 | 2026-08-07 23:37:56.580672 | 2026-08-08 02:37:26.628314 | AML_ProcessingAndTagging | 
+ 2255 | 2026-08-06 00:00:00 | 2026-08-06 23:59:59 | 13       | success      | SUCCEEDED |              | SUSPICIOUS_ACTIVITY | N/A        | /opt/netreveal/smbd/amlsmbd | AMLORCHLivyCallSmbdProcessingJob | nrod_batch  | 2026-08-06 23:34:26.447265 | 2026-08-07 02:13:56.578609 | 2026-08-06 23:35:26.548331 | 2026-08-07 02:13:26.71319  | AML_ProcessingAndTagging | 
+ 2254 | 2026-08-04 00:00:00 | 2026-08-05 23:59:59 | 12       | success      | SUCCEEDED |              | SUSPICIOUS_ACTIVITY | N/A        | /opt/netreveal/smbd/amlsmbd | AMLORCHLivyCallSmbdProcessingJob | nrod_batch  | 2026-08-06 00:30:26.447257 | 2026-08-06 05:23:26.541427 | 2026-08-06 00:31:26.544706 | 2026-08-06 05:22:56.574171 | AML_ProcessingAndTagging | 
+ 2253 | 2026-08-02 00:00:00 | 2026-08-03 23:59:59 | 11       | success      | SUCCEEDED |              | SUSPICIOUS_ACTIVITY | N/A        | /opt/netreveal/smbd/amlsmbd | AMLORCHLivyCallSmbdProcessingJob | nrod_batch  | 2026-08-03 23:29:26.436155 | 2026-08-04 01:52:26.541532 | 2026-08-03 23:30:26.538963 | 2026-08-04 01:51:56.96501  | AML_ProcessingAndTagging | </li>
+    </ul>
+    
+    
+    <h3>CDD Completion / Consistency &mdash; <span class="badge badge-NOT_PRESENT">NOT PRESENT</span></h3>
+    <p class="summary-text">CDD: Not Present</p>
+    
+    
+    <h3>Batch Failure / Overrun &mdash; <span class="badge badge-NOT_PRESENT">NOT PRESENT</span></h3>
+    <p class="summary-text">Overrun Detection: Not Present</p>
+    
+    
+  </section>
+
+  <section>
+    <h2>5. Evidence &amp; Errors</h2>
+    <p class="summary-text">Detailed evidence supporting each check result is listed above, next to the relevant check. Any check that raised an unexpected error is listed below for follow-up.</p>
+    <table>
+      <tr><th>Check</th><th>Timestamp (UTC)</th><th>Error</th></tr>
+      
+    </table>
+  </section>
+
+  <footer>Generated automatically by DailyChecksFramework &mdash; SingleClientChecks. For SRE / Management review and daily audit evidence.</footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,12 @@
+# Core dependencies for SingleClientChecks / DailyChecksFramework
+boto3>=1.34
+botocore>=1.34
+PyYAML>=6.0
+Jinja2>=3.1
+requests>=2.31
+
+# Optional - only needed if the corresponding check is enabled for a client.
+# The framework degrades to NOT CONFIGURED if these are not installed.
+# psycopg2-binary>=2.9   # database check (engine: postgresql)
+# PyMySQL>=1.1           # database check (engine: mysql)
+# kafka-python>=2.0      # kafka consumer check

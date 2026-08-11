@@ -1,0 +1,22 @@
+# Defaults merged underneath every client config in clients/<client>.yaml.
+# Client files only need to override what differs for that customer.
+
+thresholds:
+  storage_percent:
+    warning: 80
+    critical: 90
+  cpu_percent:
+    warning: 75
+    critical: 90
+  memory_percent:
+    warning: 80
+    critical: 90
+
+cloudwatch:
+  lookback_hours: 24
+
+http:
+  timeout_seconds: 10
+
+database:
+  timeout_seconds: 5

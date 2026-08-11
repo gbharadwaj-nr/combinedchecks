@@ -1,0 +1,131 @@
+# Fleetcor client configuration for the Daily Health Check.
+# Account/role and log group/stream names below are sourced from the existing
+# SingleClientChecks/FleetCor project (bootstrap.py CLIENTS + FleetCor/config.py).
+# RDS/EC2/ASG resources are still discovered dynamically via tag filters at run time.
+
+aws:
+  account_id: "444521715692"
+  role_arn: "arn:aws:iam::444521715692:role/FinOpsAutomationRole"
+  profile: null
+  regions: []   # empty -> auto-discover enabled regions for the account
+
+rds:
+  enabled: true
+  # Only report production-named RDS instances/clusters (excludes dev/test/qa/uat/sandbox).
+  production_only: true
+
+ec2:
+  enabled: true
+  # No tag filter - scans the whole account; production_only below narrows the results.
+  tag_filters: []
+  production_only: true
+  memory_metric_namespace: "CWAgent"
+
+ui:
+  enabled: true
+  endpoints:
+    - name: "Fleetcor Portal"
+      url: "https://fleetcor.example.com/health"
+      expected_status: 200
+
+# Maps to the existing "DXV" dashboard check (Acquisition Success Files),
+# reported via the same check_acq_success.log stream as ACQ Flags below.
+dxv:
+  enabled: true
+  log_group: "fltcr-production-ApplicationLogs-t0L7QoJyJRKY"
+  log_stream_pattern: "check_acq_success.log"
+  query_hours: 168   # 7 days, matches the original 604800s console query
+  tag_filters: []
+
+asg:
+  enabled: true
+  tag_filters: []
+  production_only: true
+
+kafka:
+  enabled: false
+  bootstrap_servers_env: "FLEETCOR_KAFKA_BOOTSTRAP_SERVERS"
+  consumer_groups: []
+
+cloudwatch:
+  lookback_hours: 24
+  # Real log groups used by FleetCor's existing check scripts (SingleClientChecks/FleetCor/config.py).
+  log_group_prefixes:
+    - "fltcr-production-ApplicationLogs-t0L7QoJyJRKY"
+    - "/aws/lambda/fltcrproductionUIAvailabilityCheck"
+  required_log_groups:
+    - "fltcr-production-ApplicationLogs-t0L7QoJyJRKY"
+    - "/aws/lambda/fltcrproductionUIAvailabilityCheck"
+  required_metrics:
+    - namespace: "AWS/RDS"
+      metric_name: "FreeStorageSpace"
+
+database:
+  enabled: true
+  engine: "postgresql"
+  host_env: "FLEETCOR_DB_HOST"
+  port_env: "FLEETCOR_DB_PORT"
+  name_env: "FLEETCOR_DB_NAME"
+  user_env: "FLEETCOR_DB_USER"
+  password_env: "FLEETCOR_DB_PASSWORD"
+  timeout_seconds: 5
+
+# FleetCor has no World-Check/Factiva watchlist import in the existing check
+# list (SingleClientChecks/FleetCor/config.py CHECKS) - correctly Not Present.
+watchlist:
+  enabled: false
+  sources: []
+
+# Maps to the existing "ACQ Flags" / "Bad Records" checks (Feedback Files),
+# which confirm batch files were acquired and bad-record files were sent.
+batch_file:
+  enabled: true
+  batches:
+    - name: "ACQ Flags"
+      log_group: "fltcr-production-ApplicationLogs-t0L7QoJyJRKY"
+      log_stream_pattern: "check_acq_success.log"
+      query_hours: 168   # 7 days, matches the original 604800s console query
+      detail_regex: "(?i)(acq_success_\\S+)"   # e.g. acq_success_20260807.flag
+      detail_target: "status"
+      success_label: "Sent"
+      failure_label: "Not Sent"
+    - name: "Bad Records"
+      log_group: "fltcr-production-ApplicationLogs-t0L7QoJyJRKY"
+      log_stream_pattern: "check_bad_files.log"
+      query_hours: 168   # 7 days, matches the original 604800s console query
+      detail_regex: "(NetReveal_BAD_\\d+\\.ZIP)"
+      detail_target: "status"
+      success_label: "Sent"
+      failure_label: "Not Sent"
+
+# Maps to the existing "Batch Files" / WLM Batch Monitoring dashboard check.
+wlm:
+  enabled: true
+  batches:
+    - name: "Batch Files"
+      log_group: "fltcr-production-ApplicationLogs-t0L7QoJyJRKY"
+      log_stream_pattern: "wlm_batch_monitoring.log"
+      query_hours: 168   # 7 days, matches the original 604800s console query
+      detail_regex: "(\\d{8})\\s*\\|"   # batch date before the first '|' field separator
+      detail_target: "name"   # shown as "Batch Files (20260807)"
+
+# Maps to the existing "AML Batch" dashboard check.
+aml:
+  enabled: true
+  batches:
+    - name: "AML Batch"
+      log_group: "fltcr-production-ApplicationLogs-t0L7QoJyJRKY"
+      log_stream_pattern: "aml_batch_monitoring.log"
+      query_hours: 3   # 3 hours, matches the original 10800s console query
+
+# No CDD processing in the existing FleetCor check list - correctly Not Present.
+cdd:
+  enabled: false
+  batches: []
+
+# No start/completion timestamp evidence exists in the current FleetCor check
+# scripts (only latest-message keyword checks) - left unconfigured rather than
+# inventing start/expected-completion markers that aren't backed by evidence.
+overrun:
+  enabled: false
+  batches: []
