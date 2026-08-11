@@ -13,12 +13,18 @@ pipeline {
     }
 
     parameters {
-        // Optional override. If left blank, main.py resolves the client from $CLIENT_NAME
-        // or, failing that, this job's own name (e.g. job "combined_mgl" -> client "mgl") -
-        // matching the one-job-per-client convention already used for combined_fleetcor.
-        // Onboarding a new client (MGL, BHFS, ...) is then just: add clients/<name>.yaml,
-        // create a Jenkins job named "combined_<name>" pointing at this same Jenkinsfile.
-        string(name: 'CLIENT_NAME', defaultValue: '', description: 'Client to check (optional - inferred from the job name if blank)')
+        // "auto" (default) infers the client from this job's name (e.g. job
+        // "combined_mgl" -> client "mgl"), matching the one-job-per-client
+        // convention already used for combined_fleetcor. Pick an explicit
+        // client to override that, e.g. when testing one client's checks
+        // from a different job. Onboarding a new client: add clients/<name>.yaml,
+        // add "<name>" to the choices list below, and create a Jenkins job
+        // named "combined_<name>" pointing at this same Jenkinsfile.
+        choice(
+            name: 'CLIENT_NAME',
+            choices: ['auto', 'fleetcor', 'mgl', 'bhfs'],
+            description: 'Client to check ("auto" infers it from this job\'s name)'
+        )
     }
 
     environment {
@@ -42,7 +48,13 @@ pipeline {
                 withCredentials([
                     [$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-master-account']
                 ]) {
-                    bat 'python -u main.py'
+                    bat '''
+                    if "%CLIENT_NAME%"=="auto" (
+                        python -u main.py
+                    ) else (
+                        python -u main.py --client %CLIENT_NAME%
+                    )
+                    '''
                 }
             }
         }
