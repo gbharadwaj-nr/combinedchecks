@@ -87,23 +87,7 @@
   </section>
 
   <section>
-    <h2>4. Batch / Business Process Health</h2>
-    {% for r in categories.batch %}
-    <h3>{{ r.title }} &mdash; <span class="badge badge-{{ r.status.name }}">{{ r.status.value }}</span></h3>
-    <p class="summary-text">{{ r.summary }}</p>
-    {% if r.evidence %}
-    <ul class="evidence-list">
-      {% for e in r.evidence %}<li><strong>{{ e.label }}:</strong> {{ e.value }}</li>{% endfor %}
-    </ul>
-    {% endif %}
-    {% endfor %}
-    {% if out_of_scope_by_category.batch %}
-    <p class="scope-note">Not applicable to this environment: {{ out_of_scope_by_category.batch|map(attribute='title')|join(', ') }}.</p>
-    {% endif %}
-  </section>
-
-  <section>
-    <h2>5. Evidence &amp; Errors</h2>
+    <h2>4. Evidence &amp; Errors</h2>
     <p class="summary-text">Detailed evidence supporting each check result is listed above, next to the relevant check. Any check that raised an unexpected error is listed below for follow-up.</p>
     <table>
       <tr><th>Check</th><th>Timestamp (UTC)</th><th>Error</th></tr>

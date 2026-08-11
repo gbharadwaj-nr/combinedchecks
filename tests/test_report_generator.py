@@ -33,6 +33,12 @@ class ReportGeneratorTests(unittest.TestCase):
                 # The CSS still defines a .badge-NOT_PRESENT style, but it should never be
                 # *used* on a rendered badge span since those checks are excluded from the table.
                 self.assertNotIn('class="badge badge-NOT_PRESENT"', content)
+                # Batch/business checks are merged into the Application Health section, not
+                # a separate section - only two top-level health groupings remain.
+                self.assertIn("2. Infrastructure Health", content)
+                self.assertIn("3. Application Health", content)
+                self.assertNotIn("Batch / Business Process Health", content)
+                self.assertIn("Watchlist Import Completion", content)
         finally:
             shutil.rmtree(tmp_dir, ignore_errors=True)
 
@@ -56,6 +62,18 @@ class ReportGeneratorTests(unittest.TestCase):
         in_scope, out_of_scope = _split_in_scope(results)
         self.assertEqual([r.key for r in in_scope], ["a"])
         self.assertEqual([r.key for r in out_of_scope], ["b", "c"])
+
+    def test_group_by_category_merges_batch_into_application(self):
+        from checks.base import CheckResult, Status
+        from reports.report_generator import _group_by_category
+        results = [
+            CheckResult(key="a", title="A", category="infrastructure", status=Status.HEALTHY, summary="x"),
+            CheckResult(key="b", title="B", category="application", status=Status.HEALTHY, summary="x"),
+            CheckResult(key="c", title="C", category="batch", status=Status.HEALTHY, summary="x"),
+        ]
+        grouped = _group_by_category(results)
+        self.assertEqual(set(grouped.keys()), {"infrastructure", "application"})
+        self.assertEqual([r.key for r in grouped["application"]], ["b", "c"])
 
 
 if __name__ == "__main__":

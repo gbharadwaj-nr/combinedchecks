@@ -66,6 +66,18 @@ class WatchlistCheckTests(unittest.TestCase):
         result = watchlist_check.check(MagicMock(), self.config, ["us-east-1"])
         self.assertEqual(result.status, Status.NOT_CONFIGURED)
 
+    def test_title_override_from_config(self):
+        self.config.section("watchlist")["enabled"] = False
+        self.config.section("watchlist")["title"] = "Watchlist Import (World-Check)"
+        result = watchlist_check.check(MagicMock(), self.config, ["us-east-1"])
+        self.assertEqual(result.title, "Watchlist Import (World-Check)")
+
+    def test_default_title_when_not_overridden(self):
+        self.config.section("watchlist")["enabled"] = False
+        self.config.section("watchlist").pop("title", None)
+        result = watchlist_check.check(MagicMock(), self.config, ["us-east-1"])
+        self.assertEqual(result.title, watchlist_check.TITLE)
+
 
 class BatchFileCheckTests(unittest.TestCase):
     def setUp(self):

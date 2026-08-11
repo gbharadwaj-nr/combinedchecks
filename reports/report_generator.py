@@ -37,9 +37,12 @@ def _split_in_scope(results):
 
 
 def _group_by_category(results):
-    grouped = {"infrastructure": [], "application": [], "batch": []}
+    # "batch" (business-process) checks are folded into the "application" bucket -
+    # the report shows just two top-level groupings: Infrastructure and Application.
+    category_display = {"infrastructure": "infrastructure", "application": "application", "batch": "application"}
+    grouped = {"infrastructure": [], "application": []}
     for result in results:
-        grouped.setdefault(result.category, []).append(result)
+        grouped.setdefault(category_display.get(result.category, result.category), []).append(result)
     return grouped
 
 

@@ -1,7 +1,9 @@
 """Unit tests for checks.log_batch_common's query-building helpers."""
 import unittest
+from unittest.mock import MagicMock, patch
 
-from checks.log_batch_common import _build_log_stream_query, _extract_detail
+from checks.base import Status
+from checks.log_batch_common import _build_log_stream_query, _extract_detail, evaluate_batch_entry
 
 
 class BuildLogStreamQueryTests(unittest.TestCase):
@@ -31,6 +33,33 @@ class ExtractDetailTests(unittest.TestCase):
 
     def test_returns_none_when_no_match(self):
         self.assertIsNone(_extract_detail(["no digits here"], r"(\d{8})"))
+
+
+class NotConfiguredMarkerTests(unittest.TestCase):
+    @patch("checks.log_batch_common.run_logs_insights_query")
+    def test_not_configured_marker_takes_priority_over_completion(self, mock_query):
+        mock_query.return_value = [
+            {"@timestamp": "2026-08-11 01:00:01.000", "@message": "No watchlist in use, exiting script."},
+        ]
+        entry = {
+            "name": "World-Check Watchlist Import",
+            "log_group": "/test/app",
+            "log_stream_pattern": "downloadWatchlist.log",
+            "not_configured_markers": ["No watchlist in use"],
+        }
+        status, evidence, detail = evaluate_batch_entry(MagicMock(), entry, 24)
+        self.assertEqual(status, Status.NOT_CONFIGURED)
+        self.assertEqual(detail["status"], "NOT_CONFIGURED")
+        self.assertIn("No watchlist in use", evidence[0][1])
+
+    @patch("checks.log_batch_common.run_logs_insights_query")
+    def test_no_marker_configured_falls_back_to_normal_evaluation(self, mock_query):
+        mock_query.return_value = [
+            {"@timestamp": "2026-08-11 01:00:01.000", "@message": "Batch Status: SUCCESS"},
+        ]
+        entry = {"name": "Batch Completion", "log_group": "/test/app", "log_stream_pattern": "currentBatchStatus.log"}
+        status, _evidence, _detail = evaluate_batch_entry(MagicMock(), entry, 24)
+        self.assertEqual(status, Status.COMPLETED)
 
 
 if __name__ == "__main__":

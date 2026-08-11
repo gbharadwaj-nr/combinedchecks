@@ -14,6 +14,11 @@ Entries may also set `detail_regex` (+ optional `detail_target`: "name" or
 "status", default "status") to pull an inline detail - a batch date or
 filename - out of the latest matching message, and `success_label`/
 `failure_label` to customize the evidence wording (e.g. "Sent"/"Not Sent").
+
+`not_configured_markers` - message text indicating the process is
+deliberately disabled/unused (e.g. "No watchlist in use, exiting script.") -
+checked before failure detection, so a disabled-by-design feature is reported
+as NOT_CONFIGURED rather than a false COMPLETED or FAIL.
 """
 import re
 
@@ -73,6 +78,17 @@ def _apply_detail(name, status_label, entry, detail_value):
     return name, f"{status_label} ({detail_value})"
 
 
+def _not_configured_row(rows, markers):
+    if not markers:
+        return None
+    lowered_markers = [m.lower() for m in markers]
+    for row in rows:
+        message = (row.get("@message") or "").lower()
+        if any(marker in message for marker in lowered_markers):
+            return row
+    return None
+
+
 def _evaluate_by_log_stream(logs_client, entry, query_hours, detail):
     name = detail["name"]
     log_group = detail["log_group"]
@@ -93,6 +109,12 @@ def _evaluate_by_log_stream(logs_client, entry, query_hours, detail):
         detail["status"] = "NO_DATA"
         evidence = [(name, f"No log entries on stream '{log_stream_pattern}' in {log_group} within {query_hours}h")]
         return Status.NO_DATA, evidence, detail
+
+    not_configured_row = _not_configured_row(rows, entry.get("not_configured_markers"))
+    if not_configured_row is not None:
+        detail["status"] = "NOT_CONFIGURED"
+        evidence_line = f"{not_configured_row.get('@timestamp')} | {not_configured_row.get('@message')}"
+        return Status.NOT_CONFIGURED, [(f"{name} - evidence", evidence_line)], detail
 
     messages = [row.get("@message", "") for row in rows]
     extracted = _extract_detail(messages, detail_pattern)

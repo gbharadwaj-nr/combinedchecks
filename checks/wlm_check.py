@@ -11,9 +11,10 @@ CATEGORY = "batch"
 
 
 def check(session, config, regions):
-    result = CheckResult(key=KEY, title=TITLE, category=CATEGORY, status=Status.NOT_PRESENT,
-                          summary="WLM / Screening Batch: Not Present")
     section = config.section("wlm")
+    title = section.get("title", TITLE)
+    result = CheckResult(key=KEY, title=title, category=CATEGORY, status=Status.NOT_PRESENT,
+                          summary="WLM / Screening Batch: Not Present")
     batches = section.get("batches") or []
     if not section.get("enabled", False) or not batches:
         return result

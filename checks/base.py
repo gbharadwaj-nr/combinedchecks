@@ -75,7 +75,8 @@ def run_check(check_fn, key, title, category, *args, **kwargs) -> CheckResult:
     logger.info("Check started: %s", title)
     try:
         result = check_fn(*args, **kwargs)
-        logger.info("Check completed: %s -> %s", title, result.status.value)
+        # Log the result's own title (may be client-overridden), not the static module title.
+        logger.info("Check completed: %s -> %s", result.title, result.status.value)
         return result
     except Exception as exc:  # noqa: BLE001 - isolation boundary by design
         logger.error("Check error: %s -> %s", title, exc)
