@@ -99,14 +99,12 @@ batch_file:
       log_stream_pattern: "check_acq_success.log"
       query_hours: 168   # 7 days, matches the original 604800s console query
 
-# WLM - watchlist management/screening batch.
+# WLM disabled - wlm_batch_monitoring.log's actual content is AML detection
+# processing (evidence rows say "AMLDET_SmbdProcessing"), not WLM/watchlist
+# screening - moved to the aml section below instead of mislabeling it.
 wlm:
-  enabled: true
-  batches:
-    - name: "WLM"
-      log_group: "fltcr-production-ApplicationLogs-t0L7QoJyJRKY"
-      log_stream_pattern: "wlm_batch_monitoring.log"
-      query_hours: 168   # 7 days, matches the original 604800s console query
+  enabled: false
+  batches: []
 
 # AML - anti-money-laundering batch.
 aml:
@@ -116,6 +114,10 @@ aml:
       log_group: "fltcr-production-ApplicationLogs-t0L7QoJyJRKY"
       log_stream_pattern: "aml_batch_monitoring.log"
       query_hours: 3   # 3 hours, matches the original 10800s console query
+    - name: "AML Detection (SMBD Processing)"
+      log_group: "fltcr-production-ApplicationLogs-t0L7QoJyJRKY"
+      log_stream_pattern: "wlm_batch_monitoring.log"
+      query_hours: 168   # 7 days, matches the original 604800s console query
 
 # CDD - customer due diligence SLA monitoring.
 cdd:
