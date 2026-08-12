@@ -19,6 +19,11 @@ filename - out of the latest matching message, and `success_label`/
 deliberately disabled/unused (e.g. "No watchlist in use, exiting script.") -
 checked before failure detection, so a disabled-by-design feature is reported
 as NOT_CONFIGURED rather than a false COMPLETED or FAIL.
+
+`ignore_markers` - message text for benign noise lines interleaved on the same
+stream (e.g. a housekeeping "cat: file not found" line unrelated to the actual
+process) - these rows are dropped entirely before evaluation, so they can never
+be mistaken for the representative success/failure evidence row.
 """
 import re
 
@@ -89,6 +94,14 @@ def _not_configured_row(rows, markers):
     return None
 
 
+def _drop_ignored_rows(rows, markers):
+    if not markers:
+        return rows
+    lowered_markers = [m.lower() for m in markers]
+    return [row for row in rows
+            if not any(marker in (row.get("@message") or "").lower() for marker in lowered_markers)]
+
+
 def _evaluate_by_log_stream(logs_client, entry, query_hours, detail):
     name = detail["name"]
     log_group = detail["log_group"]
@@ -104,6 +117,8 @@ def _evaluate_by_log_stream(logs_client, entry, query_hours, detail):
     except Exception as exc:  # noqa: BLE001
         logger.warning("Log-stream query failed for %s: %s", name, exc)
         rows = []
+
+    rows = _drop_ignored_rows(rows, entry.get("ignore_markers"))
 
     if not rows:
         detail["status"] = "NO_DATA"

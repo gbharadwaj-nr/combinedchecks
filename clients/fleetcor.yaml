@@ -119,14 +119,10 @@ aml:
       log_stream_pattern: "wlm_batch_monitoring.log"
       query_hours: 168   # 7 days, matches the original 604800s console query
 
-# CDD - customer due diligence SLA monitoring.
+# CDD not applicable for FleetCor - disabled per user confirmation.
 cdd:
-  enabled: true
-  batches:
-    - name: "CDD"
-      log_group: "fltcr-production-ApplicationLogs-t0L7QoJyJRKY"
-      log_stream_pattern: "CDD_SLA_Daily_Messages.log"
-      query_hours: 24
+  enabled: false
+  batches: []
 
 # Simple catch-all for the remaining fltcr-production-HealthCheck dashboard
 # widgets: add one entry per log stream to monitor - no new code required.
@@ -134,11 +130,16 @@ cdd:
 # stream name wasn't confirmed; closest match found was check_payment_response.log.)
 log_health:
   enabled: true
+  title: "Bad File"
   entries:
     - name: "DXV Landing"
       log_group: "fltcr-production-ApplicationLogs-t0L7QoJyJRKY"
       log_stream_pattern: "pollDXVLanding.log"
       query_hours: 24
+      # Benign housekeeping noise on this stream, unrelated to real envelope
+      # processing - drop it so it's never mistaken for the evidence row.
+      ignore_markers:
+        - "No such file or directory"
     - name: "Bad Files"
       log_group: "fltcr-production-ApplicationLogs-t0L7QoJyJRKY"
       log_stream_pattern: "check_bad_files.log"

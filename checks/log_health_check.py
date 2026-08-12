@@ -19,9 +19,10 @@ CATEGORY = "application"
 
 
 def check(session, config, regions):
-    result = CheckResult(key=KEY, title=TITLE, category=CATEGORY, status=Status.NOT_PRESENT,
-                          summary="Log Health: Not Present")
     section = config.section("log_health")
+    title = section.get("title", TITLE)
+    result = CheckResult(key=KEY, title=title, category=CATEGORY, status=Status.NOT_PRESENT,
+                          summary="Log Health: Not Present")
     entries = section.get("entries") or []
     if not section.get("enabled", False) or not entries:
         return result
