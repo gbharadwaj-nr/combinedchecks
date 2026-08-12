@@ -18,7 +18,7 @@ logger = get_logger(__name__)
 
 KEY = "ui"
 TITLE = "UI / Application Availability"
-CATEGORY = "application"
+CATEGORY = "infrastructure"
 
 # Matches the UI-check Lambda's log line format used by FleetCor/MGL/BHFS.
 _AVAILABILITY_QUERY = (

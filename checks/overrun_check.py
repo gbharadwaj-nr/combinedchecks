@@ -119,5 +119,5 @@ def check(session, config, regions):
 
     result.status = worst
     result.details = {"batches": details}
-    result.summary = f"Checked {len(details)} batch(es) for overrun; worst status = {worst.value}"
+    result.summary = f"Checked {len(details)} batch(es) for overrun"
     return result

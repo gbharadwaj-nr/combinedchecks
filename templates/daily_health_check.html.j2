@@ -86,9 +86,10 @@
     {% endif %}
   </section>
 
+  {% if all_results|selectattr('error')|list %}
   <section>
-    <h2>4. Evidence &amp; Errors</h2>
-    <p class="summary-text">Detailed evidence supporting each check result is listed above, next to the relevant check. Any check that raised an unexpected error is listed below for follow-up.</p>
+    <h2>Evidence &amp; Errors</h2>
+    <p class="summary-text">Any check that raised an unexpected error is listed below for follow-up.</p>
     <table>
       <tr><th>Check</th><th>Timestamp (UTC)</th><th>Error</th></tr>
       {% for r in all_results if r.error %}
@@ -96,6 +97,7 @@
       {% endfor %}
     </table>
   </section>
+  {% endif %}
 
   <footer>Generated automatically by DailyChecksFramework &mdash; SingleClientChecks. For SRE / Management review and daily audit evidence.</footer>
 </div>

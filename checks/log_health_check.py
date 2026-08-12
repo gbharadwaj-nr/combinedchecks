@@ -41,5 +41,5 @@ def check(session, config, regions):
 
     result.status = worst
     result.details = {"entries": details}
-    result.summary = f"Checked {len(details)} log stream(s); worst status = {worst.value}"
+    result.summary = f"Checked {len(details)} log stream(s)"
     return result

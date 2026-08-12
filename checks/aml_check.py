@@ -39,5 +39,5 @@ def check(session, config, regions):
     result.status = worst
     result.details = {"batches": details}
     names = ", ".join(d["name"] for d in details)
-    result.summary = f"Checked {len(details)} AML batch(es) ({names}); worst status = {worst.value}"
+    result.summary = f"Checked {len(details)} AML batch(es) ({names})"
     return result

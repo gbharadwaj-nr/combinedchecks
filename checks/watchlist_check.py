@@ -34,5 +34,5 @@ def check(session, config, regions):
     result.status = worst
     result.details = {"sources": details}
     names = ", ".join(d["name"] for d in details)
-    result.summary = f"Checked {len(details)} watchlist source(s) ({names}); worst status = {worst.value}"
+    result.summary = f"Checked {len(details)} watchlist source(s) ({names})"
     return result

@@ -130,7 +130,7 @@ cdd:
 # stream name wasn't confirmed; closest match found was check_payment_response.log.)
 log_health:
   enabled: true
-  title: "Bad File"
+  title: "Feedback File"
   entries:
     - name: "DXV Landing"
       log_group: "fltcr-production-ApplicationLogs-t0L7QoJyJRKY"
