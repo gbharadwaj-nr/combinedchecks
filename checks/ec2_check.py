@@ -54,7 +54,7 @@ def _utilization_health(percent, thresholds):
     return Status.HEALTHY.value
 
 
-def _discover_region(session, region, ec2_cfg):
+def _discover_region(session, region, ec2_cfg, name_filter):
     ec2 = session.client("ec2", region_name=region)
     filters = ec2_cfg.get("tag_filters") or []
     kwargs = {"Filters": filters} if filters else {}
@@ -69,7 +69,7 @@ def _discover_region(session, region, ec2_cfg):
         if i.get("State", {}).get("Name") != "terminated"
     ]
     if production_only:
-        instances = [i for i in instances if is_production_name(_tag_value(i.get("Tags"), "Name", i["InstanceId"]))]
+        instances = [i for i in instances if is_production_name(_tag_value(i.get("Tags"), "Name", i["InstanceId"]), name_filter)]
 
     if not instances:
         return [], {}
@@ -95,11 +95,12 @@ def check(session, config, regions):
     cpu_thresholds = config.get("thresholds", "cpu_percent") or {"warning": 75, "critical": 90}
     memory_thresholds = config.get("thresholds", "memory_percent") or cpu_thresholds
     memory_namespace = ec2_cfg.get("memory_metric_namespace")
+    name_filter = config.section("aws").get("resource_name_filter")
 
     all_instances = []
     for region in regions:
         try:
-            instances, status_map = _discover_region(session, region, ec2_cfg)
+            instances, status_map = _discover_region(session, region, ec2_cfg, name_filter)
         except Exception as exc:  # noqa: BLE001
             logger.error("EC2 discovery failed in region %s: %s", region, exc)
             continue

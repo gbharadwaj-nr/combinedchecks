@@ -25,13 +25,13 @@ def _matches_tags(asg_tags, tag_filters):
     return True
 
 
-def _discover_region(session, region, tag_filters, production_only, groups_out):
+def _discover_region(session, region, tag_filters, production_only, name_filter, groups_out):
     client = session.client("autoscaling", region_name=region)
     for page in client.get_paginator("describe_auto_scaling_groups").paginate():
         for asg in page.get("AutoScalingGroups", []):
             if not _matches_tags(asg.get("Tags"), tag_filters):
                 continue
-            if production_only and not is_production_name(asg["AutoScalingGroupName"]):
+            if production_only and not is_production_name(asg["AutoScalingGroupName"], name_filter):
                 continue
             instances = asg.get("Instances", [])
             in_service = [i for i in instances if i.get("LifecycleState") == "InService"]
@@ -57,10 +57,11 @@ def check(session, config, regions):
 
     tag_filters = section.get("tag_filters") or []
     production_only = section.get("production_only", True)
+    name_filter = config.section("aws").get("resource_name_filter")
     groups = []
     for region in regions:
         try:
-            _discover_region(session, region, tag_filters, production_only, groups)
+            _discover_region(session, region, tag_filters, production_only, name_filter, groups)
         except Exception as exc:  # noqa: BLE001
             logger.error("ASG discovery failed in region %s: %s", region, exc)
 

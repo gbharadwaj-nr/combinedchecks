@@ -12,6 +12,11 @@ aws:
   role_arn: "arn:aws:iam::616476889381:role/FinOpsAutomationRole"
   profile: null
   regions: []   # empty -> auto-discover enabled regions for the account
+  # This account is shared by 4 clients (MGL, LFS, IAG, Suncorp) - "production"
+  # alone isn't enough to scope resources to just MGL (e.g. instance names like
+  # "app2.production.mgl.nrod"). Required alongside production_only in
+  # rds/ec2/asg/dxv checks so other clients' resources are never picked up.
+  resource_name_filter: "mgl"
 
 rds:
   enabled: true
@@ -37,6 +42,7 @@ dxv:
   log_stream_pattern: "pollDXVLanding.log"
   required_markers:
     - "fn_setup_script - START"
+  limit: 200   # 2 chatty streams share this filter - default 20 was crowding out the marker
   query_hours: 24
   tag_filters: []
 
@@ -84,6 +90,7 @@ watchlist:
       log_stream_pattern: "batch/norkom.log"
       required_markers:
         - "worldcheck"
+      limit: 200   # norkom.log is chatty - default 20 was crowding out the daily marker
       query_hours: 24
 
 # No separate ACQ file-acquisition evidence beyond what dxv (envelope arrival) and
@@ -102,6 +109,7 @@ wlm:
       log_stream_pattern: "runBatch.log"
       required_markers:
         - "Batch Processing Completed"
+      limit: 200   # runBatch.log is chatty - default 20 was crowding out the marker
       query_hours: 12   # matches lookback_minutes=720 in the reference
 
 # No dedicated AML batch check in the existing MGL check list - Not Present.

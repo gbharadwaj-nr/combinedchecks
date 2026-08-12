@@ -31,7 +31,7 @@ def _tag_value(tags, key, default=None):
     return default
 
 
-def _discover_region(session, region, tag_filters, production_only, instances_out):
+def _discover_region(session, region, tag_filters, production_only, name_filter, instances_out):
     ec2 = session.client("ec2", region_name=region)
     reservations = []
     for page in ec2.get_paginator("describe_instances").paginate(Filters=tag_filters):
@@ -40,7 +40,7 @@ def _discover_region(session, region, tag_filters, production_only, instances_ou
     instance_ids = [
         i["InstanceId"] for r in reservations for i in r["Instances"]
         if i.get("State", {}).get("Name") != "terminated"
-        and (not production_only or is_production_name(_tag_value(i.get("Tags"), "Name", i["InstanceId"])))
+        and (not production_only or is_production_name(_tag_value(i.get("Tags"), "Name", i["InstanceId"]), name_filter))
     ]
     if not instance_ids:
         return
@@ -102,10 +102,11 @@ def check(session, config, regions):
         return result
 
     production_only = section.get("production_only", True)
+    name_filter = config.section("aws").get("resource_name_filter")
     instances = []
     for region in regions:
         try:
-            _discover_region(session, region, tag_filters, production_only, instances)
+            _discover_region(session, region, tag_filters, production_only, name_filter, instances)
         except Exception as exc:  # noqa: BLE001
             logger.error("DXV discovery failed in region %s: %s", region, exc)
 

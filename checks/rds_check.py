@@ -54,14 +54,14 @@ def _storage_metrics(cw_client, instance_id, allocated_gb, lookback_hours):
         return None, None
 
 
-def _discover_region(session, region, thresholds, lookback_hours, production_only, instances_out):
+def _discover_region(session, region, thresholds, lookback_hours, production_only, name_filter, instances_out):
     rds = session.client("rds", region_name=region)
     cw = session.client("cloudwatch", region_name=region)
 
     for page in rds.get_paginator("describe_db_instances").paginate():
         for db in page.get("DBInstances", []):
             instance_id = db["DBInstanceIdentifier"]
-            if production_only and not is_production_name(instance_id):
+            if production_only and not is_production_name(instance_id, name_filter):
                 continue
             allocated_gb = db.get("AllocatedStorage")
             percent_used, free_gb = _storage_metrics(cw, instance_id, allocated_gb, lookback_hours)
@@ -81,7 +81,7 @@ def _discover_region(session, region, thresholds, lookback_hours, production_onl
         for page in rds.get_paginator("describe_db_clusters").paginate():
             for cluster in page.get("DBClusters", []):
                 cluster_id = cluster["DBClusterIdentifier"]
-                if production_only and not is_production_name(cluster_id):
+                if production_only and not is_production_name(cluster_id, name_filter):
                     continue
                 instances_out.append({
                     "identifier": cluster_id,
@@ -107,11 +107,12 @@ def check(session, config, regions):
     thresholds = config.get("thresholds", "storage_percent") or {"warning": 80, "critical": 90}
     lookback_hours = config.get("cloudwatch", "lookback_hours") or 24
     production_only = config.section("rds").get("production_only", True)
+    name_filter = config.section("aws").get("resource_name_filter")
 
     instances = []
     for region in regions:
         try:
-            _discover_region(session, region, thresholds, lookback_hours, production_only, instances)
+            _discover_region(session, region, thresholds, lookback_hours, production_only, name_filter, instances)
         except Exception as exc:  # noqa: BLE001
             logger.error("RDS discovery failed in region %s: %s", region, exc)
 
