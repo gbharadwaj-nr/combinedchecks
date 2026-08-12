@@ -138,13 +138,11 @@ def check(session, config, regions):
     worst = Status.HEALTHY
     unhealthy_ids = []
     for inst in all_instances:
-        mem_text = (f"memory={inst['memory_percent']}% ({inst['memory_health']})"
-                    if inst["memory_percent"] is not None else "Memory: Not Available")
-        result.add_evidence(
-            f"{inst['instance_id']} ({inst['name']})",
-            f"state={inst['state']} | system={inst['system_status']} | instance={inst['instance_status']} | "
-            f"az={inst['availability_zone']} | cpu={inst['cpu_percent']}% ({inst['cpu_health']}) | {mem_text}",
-        )
+        evidence = (f"state={inst['state']} | system={inst['system_status']} | instance={inst['instance_status']} | "
+                    f"az={inst['availability_zone']} | cpu={inst['cpu_percent']}% ({inst['cpu_health']})")
+        if inst["memory_percent"] is not None:
+            evidence += f" | memory={inst['memory_percent']}% ({inst['memory_health']})"
+        result.add_evidence(inst["name"], evidence)
 
         if inst["state"] != "running" or "impaired" in (inst["system_status"], inst["instance_status"]):
             unhealthy_ids.append(inst["instance_id"])

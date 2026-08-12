@@ -7,7 +7,10 @@ aws:
   account_id: "444521715692"
   role_arn: "arn:aws:iam::444521715692:role/FinOpsAutomationRole"
   profile: null
-  regions: []   # empty -> auto-discover enabled regions for the account
+  # Pinned to the confirmed real region (RDS/EC2/EFS/log group all live here) -
+  # skips scanning the other ~16 enabled-but-unused regions on every check.
+  # Clear this back to [] if resources ever get added in another region.
+  regions: ["ca-central-1"]
 
 rds:
   enabled: true
@@ -27,10 +30,10 @@ ui:
   log_group: "/aws/lambda/fltcrproductionUIAvailabilityCheck"
   query_hours: 3   # matches lookback_minutes=180 in the reference console query
 
-# Maps to the existing "DXV" dashboard check (Acquisition Success Files),
-# reported via the same check_acq_success.log stream as ACQ Flags below.
+# DXV disabled - its only evidence source (check_acq_success.log) is already
+# covered by the ACQ entry under batch_file below; keeping both is duplicate noise.
 dxv:
-  enabled: true
+  enabled: false
   log_group: "fltcr-production-ApplicationLogs-t0L7QoJyJRKY"
   log_stream_pattern: "check_acq_success.log"
   query_hours: 168   # 7 days, matches the original 604800s console query
@@ -76,16 +79,6 @@ cloudwatch:
   required_metrics:
     - namespace: "AWS/RDS"
       metric_name: "FreeStorageSpace"
-
-database:
-  enabled: true
-  engine: "postgresql"
-  host_env: "FLEETCOR_DB_HOST"
-  port_env: "FLEETCOR_DB_PORT"
-  name_env: "FLEETCOR_DB_NAME"
-  user_env: "FLEETCOR_DB_USER"
-  password_env: "FLEETCOR_DB_PASSWORD"
-  timeout_seconds: 5
 
 # Simple, reusable application format: ACQ / WLM / AML / CDD. Every client is
 # expected to configure whichever of these four it actually has - the rest are
