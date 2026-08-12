@@ -74,6 +74,8 @@ def _check_log_based(session, config, regions, section, result):
         "log_group": section.get("log_group"),
         "log_stream_pattern": section.get("log_stream_pattern"),
         "query_hours": section.get("query_hours", default_hours),
+        "required_markers": section.get("required_markers"),
+        "ignore_markers": section.get("ignore_markers"),
     }
     status, evidence, _detail = evaluate_entry_with_region_discovery(session, entry, default_hours, regions, {})
     status = _LOG_STATUS_MAP.get(status, status)

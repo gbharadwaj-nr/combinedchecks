@@ -28,9 +28,16 @@ ui:
   log_group: "/aws/lambda/mglproductionUIAvailabilityCheck"
   query_hours: 3   # matches lookback_minutes=180 in the reference console query
 
-# No dedicated DXV dashboard check in the existing MGL check list - Not Present.
+# "Once envelope arrives, check for start of the batch" - pollDXVLanding.log has
+# 2 real streams (different hosts); the bare filename substring match below
+# catches both without needing to hardcode either instance ID.
 dxv:
-  enabled: false
+  enabled: true
+  log_group: "mgl-production-ApplicationLogs-1GIG4IOL2HSFZ"
+  log_stream_pattern: "pollDXVLanding.log"
+  required_markers:
+    - "fn_setup_script - START"
+  query_hours: 24
   tag_filters: []
 
 asg:
@@ -68,33 +75,33 @@ database:
   password_env: "MGL_DB_PASSWORD"
   timeout_seconds: 5
 
-# No World-Check/Factiva watchlist import in the existing MGL check list - Not Present.
-# ("WorldCheck Download" exists but is a batch download, not an import - see batch_file below.)
+# "Check on the world check daily and delete" - batch/norkom.log, keyword "worldcheck".
 watchlist:
-  enabled: false
-  sources: []
-
-# Maps to the existing "WorldCheck Download" (runBatch.log) and "Acquisition Status"
-# (getDXVLandingFiles.log) checks - confirms batch files were received/downloaded.
-batch_file:
   enabled: true
-  batches:
-    - name: "WorldCheck Download"
+  sources:
+    - name: "World-Check Daily"
       log_group: "mgl-production-ApplicationLogs-1GIG4IOL2HSFZ"
-      log_stream_pattern: "runBatch.log"
-      query_hours: 24
-    - name: "Acquisition Status"
-      log_group: "mgl-production-ApplicationLogs-1GIG4IOL2HSFZ"
-      log_stream_pattern: "batch/i-0a1a72b531032dc24/batch/getDXVLandingFiles.log"
+      log_stream_pattern: "batch/norkom.log"
+      required_markers:
+        - "worldcheck"
       query_hours: 24
 
-# Maps to the existing "WLM Status" check (runBatch.log "WLM Batch" success line).
+# No separate ACQ file-acquisition evidence beyond what dxv (envelope arrival) and
+# wlm (acquisition+WLM completion) below already cover - avoids duplicate noise.
+batch_file:
+  enabled: false
+  batches: []
+
+# "Acquisition triggered first, followed by WLM" - runBatch.log, keyword
+# "Batch Processing Completed" (only fires on an automated run, not a manual one).
 wlm:
   enabled: true
   batches:
-    - name: "WLM Status"
+    - name: "Acquisition + WLM Batch"
       log_group: "mgl-production-ApplicationLogs-1GIG4IOL2HSFZ"
       log_stream_pattern: "runBatch.log"
+      required_markers:
+        - "Batch Processing Completed"
       query_hours: 12   # matches lookback_minutes=720 in the reference
 
 # No dedicated AML batch check in the existing MGL check list - Not Present.
@@ -106,6 +113,18 @@ aml:
 cdd:
   enabled: false
   batches: []
+
+# "Check on index completion" - batch/norkom.log, keyword "Finished executing
+# procedure IndexReportProcedure." (can appear multiple times per run - any match counts).
+log_health:
+  enabled: true
+  entries:
+    - name: "Index Completion"
+      log_group: "mgl-production-ApplicationLogs-1GIG4IOL2HSFZ"
+      log_stream_pattern: "batch/norkom.log"
+      required_markers:
+        - "Finished executing procedure IndexReportProcedure."
+      query_hours: 24
 
 # No start/completion timestamp evidence exists in the current MGL check scripts
 # (only latest-message keyword checks) - left unconfigured rather than inventing

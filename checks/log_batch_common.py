@@ -24,6 +24,12 @@ as NOT_CONFIGURED rather than a false COMPLETED or FAIL.
 stream (e.g. a housekeeping "cat: file not found" line unrelated to the actual
 process) - these rows are dropped entirely before evaluation, so they can never
 be mistaken for the representative success/failure evidence row.
+
+`required_markers` - message text that MUST be present for a row to count at
+all (e.g. "worldcheck", "Batch Processing Completed") - used when a shared log
+stream carries several unrelated job types and only rows naming the specific
+job are relevant. Rows not matching any required marker are dropped before
+evaluation; if none match, the result is NO_DATA (keyword never seen).
 """
 import re
 
@@ -102,6 +108,14 @@ def _drop_ignored_rows(rows, markers):
             if not any(marker in (row.get("@message") or "").lower() for marker in lowered_markers)]
 
 
+def _keep_required_rows(rows, markers):
+    if not markers:
+        return rows
+    lowered_markers = [m.lower() for m in markers]
+    return [row for row in rows
+            if any(marker in (row.get("@message") or "").lower() for marker in lowered_markers)]
+
+
 def _evaluate_by_log_stream(logs_client, entry, query_hours, detail):
     name = detail["name"]
     log_group = detail["log_group"]
@@ -119,6 +133,7 @@ def _evaluate_by_log_stream(logs_client, entry, query_hours, detail):
         rows = []
 
     rows = _drop_ignored_rows(rows, entry.get("ignore_markers"))
+    rows = _keep_required_rows(rows, entry.get("required_markers"))
 
     if not rows:
         detail["status"] = "NO_DATA"
