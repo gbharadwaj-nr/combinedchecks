@@ -36,6 +36,17 @@ def _split_in_scope(results):
     return in_scope, out_of_scope
 
 
+# UI Availability is the most visible/relatable signal to a non-technical
+# stakeholder - always shown first in the summary table and its category section.
+_PINNED_FIRST_KEYS = ("ui",)
+
+
+def _pin_first(results):
+    pinned = [r for r in results if r.key in _PINNED_FIRST_KEYS]
+    rest = [r for r in results if r.key not in _PINNED_FIRST_KEYS]
+    return pinned + rest
+
+
 def _group_by_category(results):
     # "batch" (business-process) checks are folded into the "application" bucket -
     # the report shows just two top-level groupings: Infrastructure and Application.
@@ -55,6 +66,7 @@ def generate_report(client_name, results, run_started_at):
     template = env.get_template("daily_health_check.html.j2")
 
     in_scope_results, out_of_scope_results = _split_in_scope(results)
+    in_scope_results = _pin_first(in_scope_results)
     categories = _group_by_category(in_scope_results)
     out_of_scope_by_category = _group_by_category(out_of_scope_results)
 
