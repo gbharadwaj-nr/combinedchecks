@@ -13,17 +13,17 @@ pipeline {
     }
 
     parameters {
-        // "auto" (default) infers the client from this job's name (e.g. job
-        // "combined_mgl" -> client "mgl"), matching the one-job-per-client
-        // convention already used for combined_fleetcor. Pick an explicit
-        // client to override that, e.g. when testing one client's checks
-        // from a different job. Onboarding a new client: add clients/<name>.yaml,
-        // add "<name>" to the choices list below, and create a Jenkins job
-        // named "combined_<name>" pointing at this same Jenkinsfile.
+        // Jenkins `choice` parameters default to the FIRST entry, so "fleetcor"
+        // is the default here - this makes the job work out of the box
+        // regardless of what the Jenkins job itself is named (e.g. "Daily_Checks").
+        // Pick "auto" instead to infer the client from this job's name (e.g. job
+        // "combined_mgl" -> client "mgl"), for jobs that follow that convention.
+        // Onboarding a new client: add clients/<name>.yaml, add "<name>" to the
+        // choices list below, and create/point a Jenkins job at this Jenkinsfile.
         choice(
             name: 'CLIENT_NAME',
-            choices: ['auto', 'fleetcor', 'mgl', 'bhfs'],
-            description: 'Client to check ("auto" infers it from this job\'s name)'
+            choices: ['fleetcor', 'mgl', 'bhfs', 'auto'],
+            description: 'Client to check (default: fleetcor - pick "auto" to infer it from this job\'s name)'
         )
     }
 

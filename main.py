@@ -64,11 +64,18 @@ def parse_args(argv=None):
 
 
 def resolve_client_name(explicit_client):
-    """Resolve the client name from (in order): --client, $CLIENT_NAME, $JOB_NAME."""
+    """Resolve the client name from (in order): --client, $CLIENT_NAME, $JOB_NAME.
+
+    The literal value "auto" (from the Jenkinsfile's CLIENT_NAME choice
+    parameter default) means "not specified" - Jenkins always exports build
+    parameters as environment variables, so CLIENT_NAME=auto would otherwise
+    be mistaken for a real client name instead of falling through to JOB_NAME.
+    """
+    explicit_client = _none_if_auto(explicit_client)
     if explicit_client:
         return explicit_client
 
-    env_client = os.environ.get("CLIENT_NAME")
+    env_client = _none_if_auto(os.environ.get("CLIENT_NAME"))
     if env_client:
         return env_client
 
@@ -80,6 +87,10 @@ def resolve_client_name(explicit_client):
         "No client specified: pass --client, set CLIENT_NAME, or run from a "
         f"'{_JENKINS_JOB_PREFIX}<client>' Jenkins job"
     )
+
+
+def _none_if_auto(value):
+    return None if not value or value.strip().lower() == "auto" else value
 
 
 def run_daily_health_check(client_name, dry_run=False):

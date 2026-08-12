@@ -33,6 +33,22 @@ class ResolveClientNameTests(unittest.TestCase):
             with self.assertRaises(ClientResolutionError):
                 resolve_client_name(None)
 
+    def test_auto_client_name_env_falls_through_to_job_name(self):
+        # Reproduces the real Jenkins bug: CLIENT_NAME="auto" is exported as a
+        # real env var even though the batch script omitted --client for it.
+        with patch.dict("os.environ", {"CLIENT_NAME": "auto", "JOB_NAME": "combined_mgl"}):
+            self.assertEqual(resolve_client_name(None), "mgl")
+
+    def test_auto_explicit_client_arg_is_ignored(self):
+        with patch.dict("os.environ", {"JOB_NAME": "combined_bhfs"}, clear=True):
+            self.assertEqual(resolve_client_name("auto"), "bhfs")
+
+    def test_auto_with_no_job_name_convention_raises(self):
+        # Matches a Jenkins job named e.g. "Daily_Checks" with no client suffix.
+        with patch.dict("os.environ", {"CLIENT_NAME": "auto", "JOB_NAME": "Daily_Checks"}):
+            with self.assertRaises(ClientResolutionError):
+                resolve_client_name(None)
+
 
 if __name__ == "__main__":
     unittest.main()
