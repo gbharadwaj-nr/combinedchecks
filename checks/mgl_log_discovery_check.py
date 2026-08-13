@@ -1,8 +1,9 @@
-"""MGL Application Log Discovery - lists the latest relevant evidence rows
+"""Application Log Discovery - lists the latest relevant evidence rows
 (log group, log stream, timestamp, message, status) for a set of named
 business events, rather than collapsing each event down to a single
-pass/fail line. Config-driven (`mgl_log_discovery.entries`) so it isn't
-MGL-only in code, just in the values configured for MGL today.
+pass/fail line. Config-driven (`log_discovery.entries` in any client's
+YAML - reused as-is for MGL and FleetCor today, not specific to either
+despite this module's filename).
 
 Two entry shapes are supported:
 - Simple: one keyword search against one log stream pattern, listing the
@@ -20,8 +21,8 @@ from utils.logging_utils import get_logger
 
 logger = get_logger(__name__)
 
-KEY = "mgl_log_discovery"
-TITLE = "MGL Application Log Discovery"
+KEY = "log_discovery"
+TITLE = "Application Log Discovery"
 CATEGORY = "application"
 
 _DEFAULT_LIMIT = 200
@@ -134,7 +135,7 @@ def _evaluate_phased_entry(logs_client, entry, default_hours):
 
 
 def check(session, config, regions):
-    section = config.section("mgl_log_discovery")
+    section = config.section("log_discovery")
     title = section.get("title", TITLE)
     result = CheckResult(key=KEY, title=title, category=CATEGORY, status=Status.NOT_PRESENT,
                           summary=f"{TITLE}: Not Present")

@@ -146,8 +146,9 @@ overrun:
 # log checks, all under mgl-production-ApplicationLogs-1GIG4IOL2HSFZ (confirmed
 # real log group - NOT lfs-Prod-ApplicationLogs, which belongs to LFS on this
 # shared account).
-mgl_log_discovery:
+log_discovery:
   enabled: true
+  title: "MGL Application Log Discovery"
   entries:
     # 1. World Check Daily Delete - batch/norkom.log, latest matching entry.
     - name: "World Check Daily Delete"

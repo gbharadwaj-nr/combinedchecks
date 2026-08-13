@@ -30,15 +30,6 @@ ui:
   log_group: "/aws/lambda/fltcrproductionUIAvailabilityCheck"
   query_hours: 3   # matches lookback_minutes=180 in the reference console query
 
-# DXV disabled - its only evidence source (check_acq_success.log) is already
-# covered by the ACQ entry under batch_file below; keeping both is duplicate noise.
-dxv:
-  enabled: false
-  log_group: "fltcr-production-ApplicationLogs-t0L7QoJyJRKY"
-  log_stream_pattern: "check_acq_success.log"
-  query_hours: 168   # 7 days, matches the original 604800s console query
-  tag_filters: []
-
 asg:
   enabled: true
   tag_filters: []
@@ -80,62 +71,15 @@ cloudwatch:
     - namespace: "AWS/RDS"
       metric_name: "FreeStorageSpace"
 
-# Simple, reusable application format: ACQ / WLM / AML / CDD. Every client is
-# expected to configure whichever of these four it actually has - the rest are
-# just left enabled: false (reported as "Not Present", not a failure).
-# FleetCor's watchlist infrastructure exists but is currently disabled in
-# production (real logs: "No watchlist in use, exiting script.") - not one of
-# the 4 standard checks, so left out entirely rather than shown as unavailable.
-watchlist:
-  enabled: false
-  sources: []
-
-# ACQ disabled - replaced by the hardcoded BAD File / Batch Process checks
-# below (mgl_log_discovery section) per user request to simplify FleetCor's
-# application section down to just those two.
-batch_file:
-  enabled: false
-  batches: []
-
-# WLM disabled - wlm_batch_monitoring.log's actual content is AML detection
-# processing (evidence rows say "AMLDET_SmbdProcessing"), not WLM/watchlist
-# screening - moved to the aml section below instead of mislabeling it.
-wlm:
-  enabled: false
-  batches: []
-
-# AML disabled - replaced by the hardcoded BAD File / Batch Process checks
-# below (mgl_log_discovery section) per user request to simplify FleetCor's
-# application section down to just those two.
-aml:
-  enabled: false
-  batches: []
-
-# CDD not applicable for FleetCor - disabled per user confirmation.
-cdd:
-  enabled: false
-  batches: []
-
-# log_health disabled - replaced by the hardcoded BAD File / Batch Process
-# checks below (mgl_log_discovery section) per user request to simplify
-# FleetCor's application section down to just those two.
-log_health:
-  enabled: false
-  entries: []
-
-# No start/completion timestamp evidence exists in the current FleetCor check
-# scripts (only latest-message keyword checks) - left unconfigured rather than
-# inventing start/expected-completion markers that aren't backed by evidence.
-overrun:
-  enabled: false
-  batches: []
-
-# FleetCor application section simplified to exactly 2 hardcoded checks (both
-# confirmed real log group/stream - fetch only the latest matching event from
-# the last 24 hours each time). Reuses the same generic log-discovery module
-# already built for MGL (checks/mgl_log_discovery_check.py - code isn't MGL-
-# specific despite the filename, only the config values are).
-mgl_log_discovery:
+# FleetCor's application section is just these 2 real checks, confirmed
+# directly against the CloudWatch console (fltcr-production-ApplicationLogs-
+# t0L7QoJyJRKY / batch/i-01fb43de9bcae4ff6/batch/runBatch.log) - NOT the
+# generic ACQ/WLM/AML/CDD schema MGL uses, since FleetCor's real evidence
+# doesn't match that shape. Fetches only the latest matching event per
+# keyword from the last 24 hours. Reuses the same generic log-discovery
+# module built for MGL (checks/mgl_log_discovery_check.py - the code isn't
+# MGL-specific, only the config values are).
+log_discovery:
   enabled: true
   title: "FleetCor Application Log Discovery"
   entries:
