@@ -140,3 +140,62 @@ log_health:
 overrun:
   enabled: false
   batches: []
+
+# MGL Application Log Discovery - dedicated evidence listing (log group/stream/
+# timestamp/message/status per match) for the 4 named production application
+# log checks, all under mgl-production-ApplicationLogs-1GIG4IOL2HSFZ (confirmed
+# real log group - NOT lfs-Prod-ApplicationLogs, which belongs to LFS on this
+# shared account).
+mgl_log_discovery:
+  enabled: true
+  entries:
+    # 1. World Check Daily Delete - batch/norkom.log, latest matching entry.
+    - name: "World Check Daily Delete"
+      log_group: "mgl-production-ApplicationLogs-1GIG4IOL2HSFZ"
+      log_stream_pattern: "batch/norkom.log"
+      required_markers:
+        - "worldcheck"
+      limit: 200
+      query_hours: 24
+      max_matches: 1
+
+    # 2. Index Completion - batch/norkom.log, can fire multiple times per run -
+    # list the latest few occurrences rather than collapsing to one.
+    - name: "Index Completion"
+      log_group: "mgl-production-ApplicationLogs-1GIG4IOL2HSFZ"
+      log_stream_pattern: "batch/norkom.log"
+      required_markers:
+        - "Finished executing procedure IndexReportProcedure."
+      limit: 200
+      query_hours: 24
+      max_matches: 5
+
+    # 3. Envelope / Batch Start - pollDXVLanding.log has 2 real streams (different
+    # hosts); distinct_streams lists the latest match per stream so both are checked.
+    - name: "Envelope / Batch Start"
+      log_group: "mgl-production-ApplicationLogs-1GIG4IOL2HSFZ"
+      log_stream_pattern: "pollDXVLanding.log"
+      required_markers:
+        - "fn_setup_script - START"
+      limit: 200
+      query_hours: 24
+      distinct_streams: true
+
+    # 4. Acquisition -> WLM - runbatch.log. "Batch Processing Completed" only
+    # fires on an automated run, but exclude_markers also drops any row mentioning
+    # "manual" so a manual run is never picked up as the latest evidence. Phases
+    # are best-effort - lists whichever named stage lines are actually present.
+    - name: "Acquisition -> WLM"
+      log_group: "mgl-production-ApplicationLogs-1GIG4IOL2HSFZ"
+      log_stream_pattern: "runBatch.log"
+      exclude_markers:
+        - "manual"
+      completion_markers:
+        - "Batch Processing Completed"
+      phases:
+        - label: "Acquisition"
+          markers: ["Acquisition"]
+        - label: "WLM"
+          markers: ["WLM"]
+      limit: 200
+      query_hours: 24

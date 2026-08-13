@@ -90,14 +90,12 @@ watchlist:
   enabled: false
   sources: []
 
-# ACQ - file acquisition/receipt confirmation.
+# ACQ disabled - replaced by the hardcoded BAD File / Batch Process checks
+# below (mgl_log_discovery section) per user request to simplify FleetCor's
+# application section down to just those two.
 batch_file:
-  enabled: true
-  batches:
-    - name: "ACQ"
-      log_group: "fltcr-production-ApplicationLogs-t0L7QoJyJRKY"
-      log_stream_pattern: "check_acq_success.log"
-      query_hours: 168   # 7 days, matches the original 604800s console query
+  enabled: false
+  batches: []
 
 # WLM disabled - wlm_batch_monitoring.log's actual content is AML detection
 # processing (evidence rows say "AMLDET_SmbdProcessing"), not WLM/watchlist
@@ -106,44 +104,24 @@ wlm:
   enabled: false
   batches: []
 
-# AML - anti-money-laundering batch.
+# AML disabled - replaced by the hardcoded BAD File / Batch Process checks
+# below (mgl_log_discovery section) per user request to simplify FleetCor's
+# application section down to just those two.
 aml:
-  enabled: true
-  batches:
-    - name: "AML"
-      log_group: "fltcr-production-ApplicationLogs-t0L7QoJyJRKY"
-      log_stream_pattern: "aml_batch_monitoring.log"
-      query_hours: 3   # 3 hours, matches the original 10800s console query
-    - name: "AML Detection (SMBD Processing)"
-      log_group: "fltcr-production-ApplicationLogs-t0L7QoJyJRKY"
-      log_stream_pattern: "wlm_batch_monitoring.log"
-      query_hours: 168   # 7 days, matches the original 604800s console query
+  enabled: false
+  batches: []
 
 # CDD not applicable for FleetCor - disabled per user confirmation.
 cdd:
   enabled: false
   batches: []
 
-# Simple catch-all for the remaining fltcr-production-HealthCheck dashboard
-# widgets: add one entry per log stream to monitor - no new code required.
-# ("Payment Ingestion" removed for now - not required yet and the real log
-# stream name wasn't confirmed; closest match found was check_payment_response.log.)
+# log_health disabled - replaced by the hardcoded BAD File / Batch Process
+# checks below (mgl_log_discovery section) per user request to simplify
+# FleetCor's application section down to just those two.
 log_health:
-  enabled: true
-  title: "Feedback File"
-  entries:
-    - name: "DXV Landing"
-      log_group: "fltcr-production-ApplicationLogs-t0L7QoJyJRKY"
-      log_stream_pattern: "pollDXVLanding.log"
-      query_hours: 24
-      # Benign housekeeping noise on this stream, unrelated to real envelope
-      # processing - drop it so it's never mistaken for the evidence row.
-      ignore_markers:
-        - "No such file or directory"
-    - name: "Bad Files"
-      log_group: "fltcr-production-ApplicationLogs-t0L7QoJyJRKY"
-      log_stream_pattern: "check_bad_files.log"
-      query_hours: 168
+  enabled: false
+  entries: []
 
 # No start/completion timestamp evidence exists in the current FleetCor check
 # scripts (only latest-message keyword checks) - left unconfigured rather than
@@ -151,4 +129,33 @@ log_health:
 overrun:
   enabled: false
   batches: []
+
+# FleetCor application section simplified to exactly 2 hardcoded checks (both
+# confirmed real log group/stream - fetch only the latest matching event from
+# the last 24 hours each time). Reuses the same generic log-discovery module
+# already built for MGL (checks/mgl_log_discovery_check.py - code isn't MGL-
+# specific despite the filename, only the config values are).
+mgl_log_discovery:
+  enabled: true
+  title: "FleetCor Application Log Discovery"
+  entries:
+    # 1. BAD File.
+    - name: "BAD File"
+      log_group: "fltcr-production-ApplicationLogs-t0L7QoJyJRKY"
+      log_stream_pattern: "batch/i-01fb43de9bcae4ff6/batch/runBatch.log"
+      required_markers:
+        - "BAD"
+      limit: 200
+      query_hours: 24
+      max_matches: 1
+
+    # 2. Batch Process.
+    - name: "Batch Process"
+      log_group: "fltcr-production-ApplicationLogs-t0L7QoJyJRKY"
+      log_stream_pattern: "batch/i-01fb43de9bcae4ff6/batch/runBatch.log"
+      required_markers:
+        - "Creating"
+      limit: 200
+      query_hours: 24
+      max_matches: 1
 
